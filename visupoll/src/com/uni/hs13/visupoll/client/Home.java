@@ -9,6 +9,8 @@ public class Home implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootPanel.get().add(new Label("This label was added dymanically by JS ;-)"));
+		System.out.println("Hallo");
+		
 	}
 
 }
