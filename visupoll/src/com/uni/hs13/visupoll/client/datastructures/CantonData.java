@@ -3,7 +3,6 @@ package com.uni.hs13.visupoll.client.datastructures;
 import java.util.ArrayList;
 
 public class CantonData {
-	// Set all to private for main Application
 	private int		cantonID,	// Primary Key
 					pollID;		// Foreign Key of Poll
 	private String 	cantonNameShort, 
