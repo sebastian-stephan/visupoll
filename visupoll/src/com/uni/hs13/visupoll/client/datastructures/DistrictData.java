@@ -3,20 +3,44 @@ package com.uni.hs13.visupoll.client.datastructures;
 import java.util.ArrayList;
 
 public class DistrictData {
-	
-	private String districtName, cantonName; 
-	private int cantonId, districtId, deliveredVotes = 0, registVoters = 0, yes = 0, no = 0, validVotes = 0; //id is the townships identification
-	private float yesPercent = 0.f, noPercent = 0.f, turnout = 0.f;
+	private int 	districtID, // Primary Key
+					cantonID;	// Foreign Key of Canton
+	private String 	districtName;
+	private int 	deliveredVotes, 
+					registVoters, 
+					yes,
+					no,
+					validVotes;
+	private float 	yesPercent, 
+					noPercent, 
+					turnout;
 	private ArrayList<TownshipData> townships = new ArrayList<TownshipData>();
 
-	public DistrictData() { }
+	// Return TownshipData of District based on townshipID
+	public TownshipData getTownship(int _townshipID) {
+		for (int i = 0; i < townships.size(); i++) {
+			if (townships.get(i).getTownshipID() == _townshipID) {
+				return townships.get(i);
+			}
+		}
+
+		return null;
+	}
 	
+	// Prints summary statistics of the District
 	public void printStats() {
-		System.out.println("Canton: " + cantonId + ", " + districtId + ", " + districtName + " , Registered Voters: " + registVoters + ", Delivered Votes: " + deliveredVotes + ", Turnout: " + turnout + ", Yes Votes: "
+		System.out.println("District: " + districtID + ", " + districtName 
+				+" , Registered Voters: " + registVoters + ", Delivered Votes: " 
+				+ deliveredVotes + ", Turnout: " + turnout + ", Yes Votes: "
 				+ yes + ", No Votes: " + no + ", in Percent: " + yesPercent);
 	}
-	public TownshipData getTownship(int _id) {
-		return townships.get(_id);
+
+	// Getter methods
+	public int getDistrictID() {
+		return districtID;
+	}
+	public int getCantonID() {
+		return cantonID;
 	}
 	public String getDistrictName() {
 		return districtName;
@@ -45,11 +69,4 @@ public class DistrictData {
 	public float getTurnout() {
 		return turnout;
 	}
-	public int getCantonId() {
-		return cantonId;
-	}
-	public int getDistrictId() {
-		return districtId;
-	}
-
 }

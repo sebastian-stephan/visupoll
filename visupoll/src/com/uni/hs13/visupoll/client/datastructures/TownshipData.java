@@ -2,24 +2,35 @@ package com.uni.hs13.visupoll.client.datastructures;
 
 public class TownshipData {
 	
-	private String name; 
-	private int id, deliveredVotes, registVoters, yes, no, validVotes, cantonId, districtId, townshipId; //id is the townships identification
-	private float yesPercent, noPercent, turnout;
+	private int		townshipID,		// Primary Key
+					districtID;		// Foreign Key of District
+	private String 	townshipName; 
+	private int 	deliveredVotes, 
+					registVoters, 
+					yes, 
+					no, 
+					validVotes;
+	private float 	yesPercent, 
+					noPercent, 
+					turnout;
 
-	//constructor, saves all data into variables of the class.
-	public TownshipData() { }
-	
+	// Prints summary statistics of the Township	
 	public void printStats() {
-		System.out.println("Canton: " + cantonId + ", " + districtId + ", " + townshipId + ", " + name + " , Registered Voters: " + registVoters + ", Delivered Votes: " + deliveredVotes + ", Turnout: " + turnout + ", Yes Votes: "
+		System.out.println("Township: " + townshipID + ", " + townshipName 
+				+ " , Registered Voters: " + registVoters + ", Delivered Votes: " 
+				+ deliveredVotes + ", Turnout: " + turnout + ", Yes Votes: "
 				+ yes + ", No Votes: " + no + ", in Percent: " + yesPercent);
-		
 	}
+	
 	//Getter methods.
-	public int getId() {
-		return id;
+	public int getTownshipID() {
+		return townshipID;
 	}
-	public String getName() {
-		return name;
+	public int getDistrictID() {
+		return districtID;
+	}
+	public String getTownshipName() {
+		return townshipName;
 	}
 	public int getDeliveredVotes() {
 		return deliveredVotes;
@@ -39,8 +50,10 @@ public class TownshipData {
 	public float getYesPercent() {
 		return yesPercent;
 	}
+	public float getNoPercent() {
+		return noPercent;
+	}
 	public float getTurnout() {
 		return turnout;
 	}
-
 }
