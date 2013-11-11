@@ -1,16 +1,18 @@
-package com.uni.hs13.visupoll.client.datastructures;
+package com.uni.hs13.visupoll.datastructures;
 
-public class TownshipData {
+import java.io.Serializable;
+
+public class TownshipData implements Serializable {
 	
-	private int		townshipID,		// Primary Key
+	public int		townshipID,		// Primary Key
 					districtID;		// Foreign Key of District
-	private String 	townshipName; 
-	private int 	deliveredVotes, 
+	public String 	townshipName; 
+	public int	 	deliveredVotes, 
 					registVoters, 
 					yes, 
 					no, 
 					validVotes;
-	private float 	yesPercent, 
+	public float 	yesPercent, 
 					noPercent, 
 					turnout;
 

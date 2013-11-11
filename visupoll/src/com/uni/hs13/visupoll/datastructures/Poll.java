@@ -1,23 +1,24 @@
-package com.uni.hs13.visupoll.client.datastructures;
+package com.uni.hs13.visupoll.datastructures;
 
-import java.util.Date;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class Poll {
-	private int	 	pollID; 	// Primary Key
-	private String 	pollName, 
+public class Poll implements Serializable {
+	public int	 	pollID; 	// Primary Key
+	public String 	pollName, 
 					description;
-	private Date 	date;
-	private int 	deliveredVotes, 
+	public Date 	date;
+	public int 		deliveredVotes, 
 					registVoters, 
 					yes, 
 					no, 
 					validVotes;
-	private float 	yesPercent, 
+	public float 	yesPercent, 
 					noPercent, 
 					turnout;
-	private DemographicData demographicData;
-	private ArrayList<CantonData> cantons = new ArrayList<CantonData>();
+	public DemographicData demographicData;
+	public ArrayList<CantonData> cantons = new ArrayList<CantonData>();
 	
 	// Return CantonData of Poll based on cantonID
 	public CantonData getCanton(int _cantonID) {

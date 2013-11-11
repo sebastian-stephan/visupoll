@@ -1,21 +1,23 @@
-package com.uni.hs13.visupoll.client.datastructures;
+package com.uni.hs13.visupoll.datastructures;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class CantonData {
-	private int		cantonID,	// Primary Key
+public class CantonData implements Serializable {
+	public int 		cantonID,	// Primary Key
 					pollID;		// Foreign Key of Poll
-	private String 	cantonNameShort, 
+	public String 	cantonNameShort, 
 					cantonNameLong; 
-	private int	 	deliveredVotes, 
+	public int	 	deliveredVotes, 
 					registVoters, 
 					yes,
 					no,
 					validVotes;
-	private float 	yesPercent, 
+	public float 	yesPercent, 
 					noPercent, 
 					turnout;
-	private ArrayList<DistrictData> districts = new ArrayList<DistrictData>();
+	public ArrayList<DistrictData> districts = new ArrayList<DistrictData>();
 	
 	// Return DistrictData of Canton based on districtID
 	public DistrictData getDistrict(int _districtID) {
