@@ -6,8 +6,12 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -21,6 +25,8 @@ public class Home implements EntryPoint {
 	PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT.create(PollDataService.class);
 	ListBox pollDropDown;
 	FlexTable dataTable;
+	DialogBox helpDialog;
+	Button helpButton;
 	
 	@Override
 	public void onModuleLoad() {
@@ -30,6 +36,25 @@ public class Home implements EntryPoint {
 	    pollDropDown.setVisibleItemCount(1); 
 	    pollDropDown.setWidth("300px");
 	    RootPanel.get().add(pollDropDown);
+	    
+	    // Help dialog/button
+	    helpDialog = new DialogBox(true);
+	    helpDialog.setText("Blabla help for you");
+	    helpDialog.setGlassEnabled(true);   
+	 
+	    helpButton = new Button("Help mee");
+	    helpButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				helpDialog.center();
+				helpDialog.show();
+			}
+	    });
+	    RootPanel.get().add(helpButton);
+	    
+	
+	    
+	    
 	    
 	    // Table showing data
 		dataTable = new FlexTable();

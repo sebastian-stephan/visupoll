@@ -3,6 +3,7 @@
 <module rename-to="visupoll">
 
 	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.user.theme.standard.Standard" />
 	<source path="client" />
 	<source path="datastructures " />
 	<entry-point class="com.uni.hs13.visupoll.client.Home"></entry-point>
