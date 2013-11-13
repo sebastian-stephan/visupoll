@@ -4,10 +4,14 @@ import java.util.ArrayList;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -29,9 +33,10 @@ public class Home implements EntryPoint {
 	PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT
 			.create(PollDataService.class);
 
-	private int commentEmailClickCount = 0;
-	private int commentBodyClickCount = 0;
-	private int shareEmailClickCount = 0;
+	private static final String DEFAULT_COMMENT_BODY_AREA_TEXT = "Your comment";
+	private static final String DEFAULT_COMMENT_EMAIL_ADDRESS_TEXT = "E-mail address";
+	private static final String DEFAULT_SHARE_EMAIL_ADDRESS_TEXT = "E-mail address";
+
 		
 	FlexTable dataTable;
 	
@@ -232,30 +237,36 @@ public class Home implements EntryPoint {
 		commentEmailArea = new TextArea();
 		commentEmailArea.setWidth("200px");
 		commentEmailArea.setHeight("20px");
-				
-		commentEmailArea.addClickHandler(new ClickHandler() {			// Removes sample text ("E-mail address") after the first click
+		
+		commentEmailArea.addFocusHandler(new FocusHandler() {			// Removes sample text ("E-mail address") after the first click
+			@Override
+			public void onFocus(FocusEvent event) {
+				if(commentEmailArea.getText().equals(DEFAULT_COMMENT_EMAIL_ADDRESS_TEXT)) commentEmailArea.setText("");
+			}
+		});
+		commentEmailArea.addBlurHandler(new BlurHandler() {				// ... and put's it back when user didn't enter anything
+			@Override
+			public void onBlur(BlurEvent event) {
+				if(commentEmailArea.getText().equals("")) commentEmailArea.setText(DEFAULT_COMMENT_EMAIL_ADDRESS_TEXT);
+			}
 			
-		      public void onClick(ClickEvent event) {
-		        if (commentEmailClickCount == 0)
-		        	{
-		        		commentEmailArea.setText("");
-		        		commentEmailClickCount++;
-		        	}
-		        }
 		});
 						
 		commentBodyArea = new TextArea();
 		commentBodyArea.setWidth("200px");
 		commentBodyArea.setHeight("150px");
 						
-		commentBodyArea.addClickHandler(new ClickHandler() {			// Removes sample text ("Your comment") after the first click
-			public void onClick(ClickEvent event) {
-		        if (commentBodyClickCount == 0)
-		        	{
-		        		commentBodyArea.setText("");
-		        		commentBodyClickCount++;
-		        	}
-		        }
+		commentBodyArea.addFocusHandler(new FocusHandler() {			// Removes sample text ("Your comment") after the first click
+			@Override
+			public void onFocus(FocusEvent event) {
+				if (commentBodyArea.getText().equals(DEFAULT_COMMENT_BODY_AREA_TEXT)) commentBodyArea.setText("");
+			}			
+		});
+		commentBodyArea.addBlurHandler(new BlurHandler() {				// ... and put's it back when user didn't enter anything
+			@Override
+			public void onBlur(BlurEvent event) {						
+				if (commentBodyArea.getText().equals("")) commentBodyArea.setText(DEFAULT_COMMENT_BODY_AREA_TEXT);
+			}
 		});
 		
 		comment_hPanel = new HorizontalPanel();
@@ -291,9 +302,7 @@ public class Home implements EntryPoint {
 				commentDialog.center();
 				commentDialog.show();
 				commentEmailArea.setText("E-mail address");
-				commentEmailClickCount = 0;
 				commentBodyArea.setText("Your comment");
-				commentBodyClickCount = 0;
 			}
 		});
 		
@@ -317,15 +326,17 @@ public class Home implements EntryPoint {
 		shareEmailArea.setWidth("200px");
 		shareEmailArea.setHeight("20px");
 				
-		shareEmailArea.addClickHandler(new ClickHandler() {				// Removes sample text ("E-mail address") after the first click
-			
-		      public void onClick(ClickEvent event) {
-		        if (shareEmailClickCount == 0)
-		        	{
-		        		shareEmailArea.setText("");
-		        		shareEmailClickCount++;
-		        	}
-		        }
+		shareEmailArea.addFocusHandler(new FocusHandler() {					// Removes sample text ("E-mail address") after the first click
+			@Override
+			public void onFocus(FocusEvent event) {
+				if (shareEmailArea.getText().equals(DEFAULT_SHARE_EMAIL_ADDRESS_TEXT)) shareEmailArea.setText("");
+			}
+		});
+		shareEmailArea.addBlurHandler(new BlurHandler() {					// ... and put's it back when user didn't enter anything
+			@Override
+			public void onBlur(BlurEvent event) {
+				if (shareEmailArea.getText().equals("")) shareEmailArea.setText(DEFAULT_SHARE_EMAIL_ADDRESS_TEXT);				
+			}
 		});
 						
 		share_hPanel = new HorizontalPanel();
@@ -352,13 +363,11 @@ public class Home implements EntryPoint {
 		shareButton = new Button("Share");
 		shareButton.setWidth("100px");
 		shareButton.addClickHandler(new ClickHandler() {
-
 			@Override
 			public void onClick(ClickEvent event) {
 				shareDialog.center();
 				shareDialog.show();
-				shareEmailArea.setText("E-mail address");
-				shareEmailClickCount = 0;
+				shareEmailArea.setText(DEFAULT_SHARE_EMAIL_ADDRESS_TEXT);
 			}
 		});
 		
@@ -386,7 +395,6 @@ public class Home implements EntryPoint {
 		RootPanel.get().add(aPanel);
 
 		// List box containing all polls
-
 		pollList.addItem("--- Please select the election ---");
 		pollList.setVisibleItemCount(1);
 		pollList.setWidth("300px");
