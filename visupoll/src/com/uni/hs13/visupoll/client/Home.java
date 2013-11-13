@@ -37,13 +37,14 @@ public class Home implements EntryPoint {
 	private static final String DEFAULT_COMMENT_BODY_AREA_TEXT = "Your comment";
 	private static final String DEFAULT_COMMENT_EMAIL_ADDRESS_TEXT = "E-mail address";
 	private static final String DEFAULT_SHARE_EMAIL_ADDRESS_TEXT = "E-mail address";
+	
 
 		
 	FlexTable dataTable;
 	
 	ListBox yearList;
 	ListBox cantonList;
-	ListBox pollList;
+	OptGroupListBox pollList;
 	ListBox districtList;
 	
 	VerticalPanel vPanel_1;
@@ -110,7 +111,7 @@ public class Home implements EntryPoint {
 		cantonList.addItem("Bern");
 		cantonList.addItem("And so on..");
 
-		pollList = new ListBox();
+		pollList = new OptGroupListBox();
 		districtList = new ListBox();
 		districtList.setWidth("100px");
 		districtList.addItem("District");
@@ -119,7 +120,7 @@ public class Home implements EntryPoint {
 		districtList.addItem("District 3");
 		districtList.addItem("And so on..");
 
-		hPanel_1.add(yearList);
+		//hPanel_1.add(yearList);
 		hPanel_1.add(pollList);
 		hPanel_1.add(cantonList);
 		hPanel_1.add(districtList);
@@ -424,17 +425,24 @@ public class Home implements EntryPoint {
 		public void onSuccess(ArrayList<Poll> polls) {
 			setDefaultCursor();
 			// Fill Dropdown list
+			int curYear=0;
 			for (int i = 0; i < polls.size(); i++) {
-				pollList.addItem(polls.get(i).description);
+				// find out year of poll (workaround since calandar is not supoprted in GWT, TODO)
+				if (curYear != polls.get(i).date.getYear()+1900) {
+					curYear=polls.get(i).date.getYear()+1900;
+					pollList.addGroup("--- " + Integer.toString(curYear) + " ---");
+				}
+				pollList.addGroupItem(Integer.toString(polls.get(i).pollID), polls.get(i).description);
+
 			}
 			pollList.addChangeHandler(new ChangeHandler() {
 				// Handler for change of Dropbox
 				@Override
 				public void onChange(ChangeEvent event) {
-					if (pollList.getSelectedIndex() > 0) {
-						setWaitCursor();
+					if (pollList.getSelectedIndex() != 0) {
+					setWaitCursor();
 						pollDataService.getPoll(
-								pollList.getSelectedIndex() - 1, pollLoaded);
+								Integer.parseInt(pollList.getValue(pollList.getSelectedIndex())), pollLoaded);
 					}
 				}
 			});
@@ -462,7 +470,6 @@ public class Home implements EntryPoint {
 				int row = dataTable.getRowCount();
 				dataTable.setText(row, 0, canton.getCantonNameLong());
 				dataTable.setText(row, 1, Math.round(canton.getYesPercent() * 10.0)/ 10.0 + "%");
-				dataTable.setText(row, 2, Math.round(canton.getTurnout() * 10.0)/ 10.0 + "%");
 			}
 			dataTable.setVisible(true);
 		}
