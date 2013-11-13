@@ -1,4 +1,4 @@
-body {
+#visuPollBody {
 	padding: 10px;
 	margin-left: 20px;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
@@ -13,9 +13,17 @@ h1 {
 }
 
 #data-table {
+	width: 100%;
 	margin-top: 10px;
+	border-collapse: collapse;
+	border: 1px solid gray;
+}
+
+.dataTableHeaderRow td {
+	background-color: #C4F2FF;
 }
 
 #data-table td {
-	padding: 2px;
+	padding: 3px 10px 3px 10px;
+	border: 1px solid gray;
 }

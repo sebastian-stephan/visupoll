@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -453,13 +454,15 @@ public class Home implements EntryPoint {
 		public void onSuccess(Poll p) {
 			setDefaultCursor();
 			dataTable.removeAllRows();
+			dataTable.setText(0, 0, "Canton");
+			dataTable.setText(0, 1,	"Yes Votes");
+			RowFormatter rf = dataTable.getRowFormatter();
+			rf.addStyleName(0, "dataTableHeaderRow");
 			for (final CantonData canton : p.cantons) {
-				dataTable.setText(
-						dataTable.getRowCount(),
-						0,
-						canton.getCantonNameLong() + " ("
-								+ Math.round(canton.getYesPercent() * 10.0)
-								/ 10.0 + "%)");
+				int row = dataTable.getRowCount();
+				dataTable.setText(row, 0, canton.getCantonNameLong());
+				dataTable.setText(row, 1, Math.round(canton.getYesPercent() * 10.0)/ 10.0 + "%");
+				dataTable.setText(row, 2, Math.round(canton.getTurnout() * 10.0)/ 10.0 + "%");
 			}
 			dataTable.setVisible(true);
 		}
