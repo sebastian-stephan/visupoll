@@ -14,211 +14,408 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.uni.hs13.visupoll.client.rpc.PollDataService;
 import com.uni.hs13.visupoll.client.rpc.PollDataServiceAsync;
 import com.uni.hs13.visupoll.datastructures.CantonData;
 import com.uni.hs13.visupoll.datastructures.Poll;
 
-
 public class Home implements EntryPoint {
-	PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT.create(PollDataService.class);
-	
+	PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT
+			.create(PollDataService.class);
+
+	private int commentEmailClickCount = 0;
+	private int commentBodyClickCount = 0;
+	private int shareEmailClickCount = 0;
+		
 	FlexTable dataTable;
-	ListBox pollList;
 	
+	ListBox yearList;
+	ListBox cantonList;
+	ListBox pollList;
+	ListBox districtList;
+	
+	VerticalPanel vPanel_1;
+	VerticalPanel vPanel_2;
+	VerticalPanel vPanel_3;
+	VerticalPanel comment_vPanel;
+	VerticalPanel share_vPanel;
+	VerticalPanel help_vPanel;
+	VerticalPanel about_vPanel;
+	
+	HorizontalPanel hPanel_1;
+	HorizontalPanel hPanel_2;
+	HorizontalPanel comment_hPanel;
+	HorizontalPanel share_hPanel;
+	HorizontalPanel about_hPanel;
+	
+	Button helpButton;
+	Button aboutButton;
+	Button commentButton;
+	Button shareButton;
+	
+	Button commentCancelButton;
+	Button commentSendButton;
+	Button shareCancelButton;
+	Button shareSendButton;
+	Button helpCloseButton;
+	Button aboutCloseButton;
+	
+	TextArea commentEmailArea;
+	TextArea commentBodyArea;
+	TextArea shareEmailArea;
+	TextArea helpTextArea;
+	TextArea aboutTextArea;
+		
+
 	@Override
 	public void onModuleLoad() {
+
+		final DialogBox commentDialog;
+		final DialogBox shareDialog;
+		final DialogBox helpDialog;
+		final DialogBox aboutDialog;
+
+		vPanel_1 = new VerticalPanel(); 					// Left set of controls
+		vPanel_1.setSpacing(10);
+		vPanel_1.setWidth("600px");
 		
-				/*MapView mapView = new MapView();
-				RootPanel.get().add(mapView);*/
+		hPanel_1 = new HorizontalPanel(); 					// List boxes
+		hPanel_1.setSpacing(10);
+
+		yearList = new ListBox();
+		yearList.setWidth("100px");
+		yearList.addItem("Year");
+		yearList.addItem("2013");							// Sample years
+		yearList.addItem("2012");
+		yearList.addItem("2011");
+		yearList.addItem("2010");
+
+		cantonList = new ListBox();
+		cantonList.setWidth("100px");
+		cantonList.addItem("Canton");
+		cantonList.addItem("Zurich");						// Sample cantons
+		cantonList.addItem("Aargau");
+		cantonList.addItem("Bern");
+		cantonList.addItem("And so on..");
+
+		pollList = new ListBox();
+		districtList = new ListBox();
+		districtList.setWidth("100px");
+		districtList.addItem("District");
+		districtList.addItem("District 1");					// Sample districts
+		districtList.addItem("District 2");
+		districtList.addItem("District 3");
+		districtList.addItem("And so on..");
+
+		hPanel_1.add(yearList);
+		hPanel_1.add(pollList);
+		hPanel_1.add(cantonList);
+		hPanel_1.add(districtList);
+
+		vPanel_1.add(hPanel_1);
+
+		
+		vPanel_2 = new VerticalPanel(); 					// Help, About, Comment and Share buttons
+		vPanel_2.setSpacing(10);
 				
-				 
-				final DialogBox dialogContents;	//dialogBox
+		
+		
+		//******* Dialog box for Help Button *******//
+		
+		helpDialog = new DialogBox();
+		helpDialog.setAnimationEnabled(true);
+		helpDialog.setGlassEnabled(true);
+		helpDialog.setText("HELP");
+		help_vPanel = new VerticalPanel();
+		help_vPanel.setSpacing(10);
+		
+		helpTextArea = new TextArea();
+		helpTextArea.setEnabled(false);
+		helpTextArea.setWidth("500px");
+		helpTextArea.setHeight("170px");
+		helpTextArea.setText("Select the year and election type which you would like to visualize."
+				+ "\nSelecting canton and/or district will show "
+				+ "information only in the selected region.\n\nBy clicking 'Comment' button you can send "
+				+ "comment on the current visualization to the e-mail address specified."
+				+ "\n\nBy clicking 'Share' button you can send the current visualization to "
+				+ "the e-mail address specified.");
 				
-				VerticalPanel vPanel_1 = new VerticalPanel(); // left set of controls
-				vPanel_1.setSpacing(10);
-				vPanel_1.setWidth("600px");
+		helpCloseButton = new Button("Ok");
+		helpCloseButton.setWidth("100px");
+		helpCloseButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				helpDialog.hide();
+			}
+		});
+		
+		help_vPanel.add(helpTextArea);
+		help_vPanel.add(helpCloseButton);
+		helpDialog.add(help_vPanel);
+		help_vPanel.setCellHorizontalAlignment(helpTextArea, HasHorizontalAlignment.ALIGN_CENTER);
+		help_vPanel.setCellHorizontalAlignment(helpCloseButton, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		helpButton = new Button("Help");
+		helpButton.setWidth("100px");
+		helpButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				helpDialog.center();
+				helpDialog.show();
+			}
+		});
+		
+		//******* END - Dialog box for Help Button *******//
 
-				RadioButton mapViewButton = new RadioButton("radioGroup", "Map view");
-				RadioButton tableViewButton = new RadioButton("radioGroup",	"Table view");
-				mapViewButton.setValue(true);
+		
+		
+		//******* Dialog box for About Button *******//
+		
+		aboutDialog = new DialogBox();
+		aboutDialog.setAnimationEnabled(true);
+		aboutDialog.setGlassEnabled(true);
+		aboutDialog.setText("About");
+		about_vPanel = new VerticalPanel();
+		about_vPanel.setSpacing(10);
+		
+		aboutTextArea = new TextArea();
+		aboutTextArea.setWidth("500px");
+		aboutTextArea.setHeight("150px");
+		aboutTextArea.setText("This web application offers a graphical and tabular visualization of "
+				+ "the results of elections in Switzerland in the last few years.\n\n"
+				+ "Authors:\nGroup '4 Musketiere'\n\nAutumn 2013\nUniversity of Zurich");
+		aboutTextArea.setEnabled(false);
+		
+		aboutCloseButton = new Button("Ok");
+		aboutCloseButton.setWidth("100px");
+		aboutCloseButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				aboutDialog.hide();
+			}
+		});
+		
+		about_vPanel.add(aboutTextArea);
+		about_vPanel.add(aboutCloseButton);
+		aboutDialog.add(about_vPanel);
+		about_vPanel.setCellHorizontalAlignment(aboutTextArea, HasHorizontalAlignment.ALIGN_CENTER);
+		about_vPanel.setCellHorizontalAlignment(aboutCloseButton, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		aboutButton = new Button("About");
+		aboutButton.setWidth("100px");
+		aboutButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				aboutDialog.center();
+				aboutDialog.show();
+			}
+		});
+		
+		//******* END - Dialog box for About Button *******//
 
-				vPanel_1.add(mapViewButton);
-				vPanel_1.add(tableViewButton);
+		
+		
+		//******* Dialog box for Comment Button *******//
+		
+		commentDialog = new DialogBox();
+		commentDialog.setText("Comment");
+		commentDialog.setGlassEnabled(true);
+		commentDialog.setAnimationEnabled(true);
 
-				HorizontalPanel hPanel_1 = new HorizontalPanel(); // list boxes and Show
-																	// button
-				hPanel_1.setSpacing(10);
-
-				ListBox yearList = new ListBox();
-				yearList.setWidth("100px");
-				yearList.addItem("Year");
-				yearList.addItem("2013");
-				yearList.addItem("2012");
-				yearList.addItem("2011");
-				yearList.addItem("2010");
-
-				ListBox cantonList = new ListBox();
-				cantonList.setWidth("100px");
-				cantonList.addItem("Canton");
-				cantonList.addItem("Zurich");
-				cantonList.addItem("Aargau");
-				cantonList.addItem("Bern");
-				cantonList.addItem("And so on..");
+		comment_vPanel = new VerticalPanel();
+		comment_vPanel.setSpacing(10);
+		
+		commentDialog.add(comment_vPanel);
+		
+		commentEmailArea = new TextArea();
+		commentEmailArea.setWidth("200px");
+		commentEmailArea.setHeight("20px");
 				
-				pollList = new ListBox();
-				pollList.setWidth("100px");
-								
-				ListBox districtList = new ListBox();
-				districtList.setWidth("100px");
-				districtList.addItem("District");
-				districtList.addItem("District 1");
-				districtList.addItem("District 2");
-				districtList.addItem("District 3");
-				districtList.addItem("And so on..");
-
-				Button showButton = new Button("Show");
-				showButton.setWidth("50px");
-
-				hPanel_1.add(yearList);
-				hPanel_1.add(pollList);
-				hPanel_1.add(cantonList);
-				hPanel_1.add(districtList);
-				hPanel_1.add(showButton);
-
-				vPanel_1.add(hPanel_1);
-
-				VerticalPanel vPanel_2 = new VerticalPanel(); // Help and About buttons
-				vPanel_2.setSpacing(10);
-				VerticalPanel vPanel_3 = new VerticalPanel(); // empty panel (spacing
-																// between pairs of
-																// buttons)
-				vPanel_3.setHeight("200px");
-				VerticalPanel vPanel_4 = new VerticalPanel(); // Comment and Share
-																// buttons
-				vPanel_4.setSpacing(10);
-
-				Button helpButton = new Button("Help");
-				helpButton.setWidth("100px");
-				helpButton.addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						Window.alert("It is the HELP");
-						/*DialogBox dialogBox = new DialogBox(true);
-						dialogBox.setAnimationEnabled(true);
-						dialogBox.setTitle("Text example(title");
-						dialogBox.setText("Text of help button");
-						dialogBox.show();
-						dialogBox.setGlassEnabled(true);
-						dialogBox.center();*/
-					}
-				});
-				
-				Button aboutButton = new Button("About");
-				aboutButton.setWidth("100px");
-				aboutButton.addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						Window.alert("It is ABOUT \nThis should be on a new line\nIt is ABOUT");
-					}
-				});
-				
-				dialogContents = new DialogBox(true); //Dialog box
-				VerticalPanel dialogPanel = new VerticalPanel();
-				dialogContents.add(dialogPanel);
-				Button testButton = new Button("TEST");
-				dialogPanel.add(testButton);
-				dialogContents.setGlassEnabled(true);
-				dialogContents.setAnimationEnabled(true);
-				
-				
-				Button commentButton = new Button("Comment");
-				commentButton.addClickHandler(new ClickHandler(){
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						
-						dialogContents.center();
-						dialogContents.show();
-						
-						
-					}
-					
-				});
-				commentButton.setWidth("100px");
-				Button shareButton = new Button("Share");
-				shareButton.setWidth("100px");
-
-				vPanel_2.add(helpButton);
-				vPanel_2.add(aboutButton);
-				vPanel_4.add(commentButton);
-				vPanel_4.add(shareButton);
-				
-				VerticalPanel vPanel_5 = new VerticalPanel(); // right set of controls
-																// (4 buttons with
-																// spacing)
-				vPanel_5.add(vPanel_2);
-				vPanel_5.add(vPanel_3);
-				vPanel_5.add(vPanel_4);
-
-				
-
-					
-					VerticalPanel vPanel_6 = new VerticalPanel();
-					vPanel_1.add(vPanel_6);
-					
-					vPanel_6.setWidth("502px");
-
-				HorizontalPanel hPanel_2 = new HorizontalPanel(); // final panel
-				hPanel_2.setSpacing(10);
-				hPanel_2.add(vPanel_1);
-				hPanel_2.add(vPanel_5);
-				
-				AbsolutePanel aPanel = new AbsolutePanel();
-				aPanel.add(hPanel_2);
-
-				RootPanel.get().add(aPanel);
-
+		commentEmailArea.addClickHandler(new ClickHandler() {			// Removes sample text ("E-mail address") after the first click
 			
+		      public void onClick(ClickEvent event) {
+		        if (commentEmailClickCount == 0)
+		        	{
+		        		commentEmailArea.setText("");
+		        		commentEmailClickCount++;
+		        	}
+		        }
+		});
+						
+		commentBodyArea = new TextArea();
+		commentBodyArea.setWidth("200px");
+		commentBodyArea.setHeight("150px");
+						
+		commentBodyArea.addClickHandler(new ClickHandler() {			// Removes sample text ("Your comment") after the first click
+			public void onClick(ClickEvent event) {
+		        if (commentBodyClickCount == 0)
+		        	{
+		        		commentBodyArea.setText("");
+		        		commentBodyClickCount++;
+		        	}
+		        }
+		});
 		
+		comment_hPanel = new HorizontalPanel();
+		comment_hPanel.setSpacing(10);
+		commentSendButton = new Button("Send");
+		commentSendButton.setWidth("100px");
+		
+		commentCancelButton = new Button("Cancel");
+		commentCancelButton.setWidth("100px");
+		commentCancelButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				commentDialog.hide();
+			}
+		});
+		
+		
+		comment_hPanel.add(commentSendButton);
+		comment_hPanel.add(commentCancelButton);
+				
+		comment_vPanel.add(commentEmailArea);
+		comment_vPanel.add(commentBodyArea);
+		comment_vPanel.add(comment_hPanel);
+		comment_vPanel.setCellHorizontalAlignment(commentEmailArea, HasHorizontalAlignment.ALIGN_CENTER);
+		comment_vPanel.setCellHorizontalAlignment(commentBodyArea, HasHorizontalAlignment.ALIGN_CENTER);
+		comment_vPanel.setCellHorizontalAlignment(comment_hPanel, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		commentButton = new Button("Comment");
+		commentButton.setWidth("100px");
+		commentButton.addClickHandler(new ClickHandler() {
 
-	    // List box containing all polls
-	    
-		pollList.addItem("--- Bitte Abstimmung auswählen ---");
-	    pollList.setVisibleItemCount(1); 
-	    pollList.setWidth("300px");
-	    //RootPanel.get().add(pollList);
-	    
-	        
-	    
-	    // Table showing data
+			@Override
+			public void onClick(ClickEvent event) {
+				commentDialog.center();
+				commentDialog.show();
+				commentEmailArea.setText("E-mail address");
+				commentEmailClickCount = 0;
+				commentBodyArea.setText("Your comment");
+				commentBodyClickCount = 0;
+			}
+		});
+		
+		//******* END - Dialog box for Comment Button *******//
+		
+		
+		
+		//******* Dialog box for Share Button *******//
+		
+		shareDialog = new DialogBox();
+		shareDialog.setText("Share");
+		shareDialog.setGlassEnabled(true);
+		shareDialog.setAnimationEnabled(true);
+		
+		share_vPanel = new VerticalPanel();
+		share_vPanel.setSpacing(10);
+		
+		shareDialog.add(share_vPanel);
+		
+		shareEmailArea = new TextArea();
+		shareEmailArea.setWidth("200px");
+		shareEmailArea.setHeight("20px");
+				
+		shareEmailArea.addClickHandler(new ClickHandler() {				// Removes sample text ("E-mail address") after the first click
+			
+		      public void onClick(ClickEvent event) {
+		        if (shareEmailClickCount == 0)
+		        	{
+		        		shareEmailArea.setText("");
+		        		shareEmailClickCount++;
+		        	}
+		        }
+		});
+						
+		share_hPanel = new HorizontalPanel();
+		share_hPanel.setSpacing(10);
+		shareSendButton = new Button("Send");
+		shareSendButton.setWidth("100px");
+		
+		shareCancelButton = new Button("Cancel");
+		shareCancelButton.setWidth("100px");
+		shareCancelButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				shareDialog.hide();
+			}
+		});
+				
+		share_hPanel.add(shareSendButton);
+		share_hPanel.add(shareCancelButton);
+				
+		share_vPanel.add(shareEmailArea);
+		share_vPanel.add(share_hPanel);
+		share_vPanel.setCellHorizontalAlignment(shareEmailArea, HasHorizontalAlignment.ALIGN_CENTER);
+		share_vPanel.setCellHorizontalAlignment(share_hPanel, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		shareButton = new Button("Share");
+		shareButton.setWidth("100px");
+		shareButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				shareDialog.center();
+				shareDialog.show();
+				shareEmailArea.setText("E-mail address");
+				shareEmailClickCount = 0;
+			}
+		});
+		
+		//******* END - Dialog box for Share Button *******//
+
+		
+		vPanel_2.add(helpButton);
+		vPanel_2.add(aboutButton);
+		vPanel_2.add(commentButton);
+		vPanel_2.add(shareButton);
+
+		vPanel_3 = new VerticalPanel();
+		vPanel_1.add(vPanel_3);
+
+		vPanel_3.setWidth("502px");
+
+		HorizontalPanel hPanel_2 = new HorizontalPanel(); // final panel
+		hPanel_2.setSpacing(10);
+		hPanel_2.add(vPanel_1);
+		hPanel_2.add(vPanel_2);
+
+		AbsolutePanel aPanel = new AbsolutePanel();
+		aPanel.add(hPanel_2);
+
+		RootPanel.get().add(aPanel);
+
+		// List box containing all polls
+
+		pollList.addItem("--- Please select the election ---");
+		pollList.setVisibleItemCount(1);
+		pollList.setWidth("300px");
+		
+		// Table showing data
 		dataTable = new FlexTable();
 		dataTable.getElement().setId("data-table");
 		dataTable.setVisible(false);
-		//RootPanel.get().add(dataTable);
-		vPanel_6.add(dataTable);
-	    
+		vPanel_3.add(dataTable);
+
 		// Load list of polls
-	    pollDataService.getListOfPolls(pollListLoaded);
-	    setWaitCursor();
-		
+		pollDataService.getListOfPolls(pollListLoaded);
+		setWaitCursor();
+
 	}
-	
+
 	// List of polls was loaded
-	AsyncCallback< ArrayList<Poll> > pollListLoaded = new AsyncCallback<ArrayList<Poll>> () {
+	AsyncCallback<ArrayList<Poll>> pollListLoaded = new AsyncCallback<ArrayList<Poll>>() {
 		@Override
 		public void onFailure(Throwable caught) {
 			Window.alert("Failed to load list of polls");
-			caught.printStackTrace();	
+			caught.printStackTrace();
 		}
+
 		@Override
 		public void onSuccess(ArrayList<Poll> polls) {
 			setDefaultCursor();
 			// Fill Dropdown list
-			for(int i=0;i<polls.size();i++) {
+			for (int i = 0; i < polls.size(); i++) {
 				pollList.addItem(polls.get(i).description);
 			}
 			pollList.addChangeHandler(new ChangeHandler() {
@@ -227,41 +424,46 @@ public class Home implements EntryPoint {
 				public void onChange(ChangeEvent event) {
 					if (pollList.getSelectedIndex() > 0) {
 						setWaitCursor();
-						pollDataService.getPoll(pollList.getSelectedIndex() - 1, pollLoaded);
+						pollDataService.getPoll(
+								pollList.getSelectedIndex() - 1, pollLoaded);
 					}
 				}
 			});
 		}
-		
+
 	};
-	
+
 	// Poll was loaded (after selection in dropbox)
-	AsyncCallback<Poll> pollLoaded = new AsyncCallback<Poll> (){
+	AsyncCallback<Poll> pollLoaded = new AsyncCallback<Poll>() {
 		@Override
 		public void onFailure(Throwable caught) {
 			Window.alert("Failed to load selected Poll");
 			caught.printStackTrace();
 		}
+
 		@Override
 		public void onSuccess(Poll p) {
 			setDefaultCursor();
 			dataTable.removeAllRows();
-			for(final CantonData canton : p.cantons) {
-				dataTable.setText(dataTable.getRowCount(), 0, 
-						canton.getCantonNameLong() + " ("+ Math.round(canton.getYesPercent()*10.0)/10.0 + "%)");
+			for (final CantonData canton : p.cantons) {
+				dataTable.setText(
+						dataTable.getRowCount(),
+						0,
+						canton.getCantonNameLong() + " ("
+								+ Math.round(canton.getYesPercent() * 10.0)
+								/ 10.0 + "%)");
 			}
 			dataTable.setVisible(true);
 		}
 	};
-	
 
 	// Jquery eyecandy
 	public static native void setWaitCursor() /*-{
 		$wnd.jQuery("body").css("cursor", "wait");
 	}-*/;
-	
+
 	public static native void setDefaultCursor() /*-{
 		$wnd.jQuery("body").css("cursor", "default");
 	}-*/;
-	
+
 }
