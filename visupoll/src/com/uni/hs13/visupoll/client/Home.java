@@ -498,6 +498,9 @@ public class Home implements EntryPoint {
 	private ChangeHandler cantonSelected = new ChangeHandler() {
 		@Override
 		public void onChange(ChangeEvent event) {
+			if (cantonList.getValue(cantonList.getSelectedIndex()).equals(DEAD_DROPBOX_ITEM))
+				return;
+			
 			setWaitCursor();
 			
 			// Remove everything in datatable and add heading row
@@ -510,6 +513,7 @@ public class Home implements EntryPoint {
 			// Clear district dropdown
 			districtList.clear();
 			districtList.addItem("District",DEAD_DROPBOX_ITEM);
+			
 			for(final DistrictData district : getSelectedCanton().districts) {
 				// Fill Data table
 				int row = dataTable.getRowCount();
@@ -527,6 +531,9 @@ public class Home implements EntryPoint {
 	private ChangeHandler districtSelected = new ChangeHandler() {
 		@Override
 		public void onChange(ChangeEvent event) {
+			if (districtList.getValue(districtList.getSelectedIndex()).equals(DEAD_DROPBOX_ITEM))
+				return;
+			
 			setWaitCursor();
 			
 			// Remove everything in datatable and add heading row
