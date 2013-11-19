@@ -16,7 +16,7 @@ public class CantonDataTest {
 		
 		cd = new CantonData();
 		cd.cantonID = 3;
-		cd.pollID = 4; //test
+		cd.pollID = 4;
 		cd.cantonNameShort = "UR";
 		cd.cantonNameLong = "Uri";
 		cd.deliveredVotes = 500;
