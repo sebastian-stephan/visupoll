@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.uni.hs13.visupoll.datastructures.Poll;
 
 public class PollTest {
+	//test
 	Poll p;
 
 	@Before

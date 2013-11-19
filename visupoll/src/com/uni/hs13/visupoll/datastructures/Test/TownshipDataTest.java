@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.uni.hs13.visupoll.datastructures.TownshipData;
 
 public class TownshipDataTest {
-
+	//test
 	TownshipData td;
 	@Before
 	public void setUp() throws Exception {

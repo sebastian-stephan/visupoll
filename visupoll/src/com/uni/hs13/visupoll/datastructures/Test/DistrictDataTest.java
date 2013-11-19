@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.uni.hs13.visupoll.datastructures.DistrictData;
 
 public class DistrictDataTest {
-
+	//test
 	DistrictData dt;
 	
 	@Before
