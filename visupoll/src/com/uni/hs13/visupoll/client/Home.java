@@ -25,10 +25,13 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sun.java.swing.plaf.windows.WindowsBorders;
 import com.uni.hs13.visupoll.client.rpc.PollDataService;
 import com.uni.hs13.visupoll.client.rpc.PollDataServiceAsync;
 import com.uni.hs13.visupoll.datastructures.CantonData;
+import com.uni.hs13.visupoll.datastructures.DistrictData;
 import com.uni.hs13.visupoll.datastructures.Poll;
+import com.uni.hs13.visupoll.datastructures.TownshipData;
 
 public class Home implements EntryPoint {
 	PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT
@@ -37,8 +40,10 @@ public class Home implements EntryPoint {
 	private static final String DEFAULT_COMMENT_BODY_AREA_TEXT = "Your comment";
 	private static final String DEFAULT_COMMENT_EMAIL_ADDRESS_TEXT = "E-mail address";
 	private static final String DEFAULT_SHARE_EMAIL_ADDRESS_TEXT = "E-mail address";
-	
 
+	private static final String DEAD_DROPBOX_ITEM = "NA";
+	
+	protected Poll curPoll = null;
 		
 	FlexTable dataTable;
 	
@@ -105,23 +110,20 @@ public class Home implements EntryPoint {
 
 		cantonList = new ListBox();
 		cantonList.setWidth("100px");
-		cantonList.addItem("Canton");
-		cantonList.addItem("Zurich");						// Sample cantons
-		cantonList.addItem("Aargau");
-		cantonList.addItem("Bern");
-		cantonList.addItem("And so on..");
+		cantonList.addItem("Canton", DEAD_DROPBOX_ITEM);
+		cantonList.setEnabled(false);
+		
+		
 
 		pollList = new OptGroupListBox();
 		districtList = new ListBox();
 		districtList.setWidth("100px");
-		districtList.addItem("District");
-		districtList.addItem("District 1");					// Sample districts
-		districtList.addItem("District 2");
-		districtList.addItem("District 3");
-		districtList.addItem("And so on..");
+		districtList.addItem("District", DEAD_DROPBOX_ITEM);
+		districtList.setEnabled(false);
 
 		//hPanel_1.add(yearList);
 		hPanel_1.add(pollList);
+		
 		hPanel_1.add(cantonList);
 		hPanel_1.add(districtList);
 
@@ -413,7 +415,7 @@ public class Home implements EntryPoint {
 
 	}
 
-	// List of polls was loaded
+	// List of polls was loaded (only run once)
 	AsyncCallback<ArrayList<Poll>> pollListLoaded = new AsyncCallback<ArrayList<Poll>>() {
 		@Override
 		public void onFailure(Throwable caught) {
@@ -424,10 +426,10 @@ public class Home implements EntryPoint {
 		@Override
 		public void onSuccess(ArrayList<Poll> polls) {
 			setDefaultCursor();
-			// Fill Dropdown list
+			// Fill Poll Dropdown list
 			int curYear=0;
 			for (int i = 0; i < polls.size(); i++) {
-				// find out year of poll (workaround since calandar is not supoprted in GWT, TODO)
+				// find out year of poll (workaround since calendar is not supported in GWT, TODO)
 				if (curYear != polls.get(i).date.getYear()+1900) {
 					curYear=polls.get(i).date.getYear()+1900;
 					pollList.addGroup("--- " + Integer.toString(curYear) + " ---");
@@ -435,19 +437,22 @@ public class Home implements EntryPoint {
 				pollList.addGroupItem(Integer.toString(polls.get(i).pollID), polls.get(i).description);
 
 			}
-			pollList.addChangeHandler(new ChangeHandler() {
-				// Handler for change of Dropbox
-				@Override
-				public void onChange(ChangeEvent event) {
-					if (pollList.getSelectedIndex() != 0) {
-					setWaitCursor();
-						pollDataService.getPoll(
-								Integer.parseInt(pollList.getValue(pollList.getSelectedIndex())), pollLoaded);
-					}
-				}
-			});
+			pollList.addChangeHandler(pollSelected);
 		}
 
+	};
+
+	private ChangeHandler pollSelected = new ChangeHandler() {
+		// Handler for change of Poll dropbox
+		@Override
+		public void onChange(ChangeEvent event) {
+			
+			if (pollList.getSelectedIndex() != 0) {
+				setWaitCursor();
+				pollDataService.getPoll(getSelectedPollID(), pollLoaded);
+			}
+		}
+		
 	};
 
 	// Poll was loaded (after selection in dropbox)
@@ -460,20 +465,105 @@ public class Home implements EntryPoint {
 
 		@Override
 		public void onSuccess(Poll p) {
-			setDefaultCursor();
+			// Save the poll in the instance variable curPoll
+			curPoll = p;
+			
+			// Remove everything in datatable and add heading row
 			dataTable.removeAllRows();
 			dataTable.setText(0, 0, "Canton");
 			dataTable.setText(0, 1,	"Yes Votes");
 			RowFormatter rf = dataTable.getRowFormatter();
 			rf.addStyleName(0, "dataTableHeaderRow");
-			for (final CantonData canton : p.cantons) {
+			
+			// Clear canton dropdownlist
+			cantonList.clear();
+			cantonList.addItem("Canton", DEAD_DROPBOX_ITEM);
+
+			for (final CantonData canton : curPoll.cantons) {
+				// Fill data table
 				int row = dataTable.getRowCount();
-				dataTable.setText(row, 0, canton.getCantonNameLong());
+				dataTable.setText(row, 0, canton.cantonNameLong);
 				dataTable.setText(row, 1, Math.round(canton.getYesPercent() * 10.0)/ 10.0 + "%");
+				// Also fill Canton Dropdown
+				cantonList.addItem(canton.cantonNameLong, Integer.toString(canton.cantonID));
 			}
+			cantonList.setEnabled(true);
+			cantonList.addChangeHandler(cantonSelected);
+			districtList.setEnabled(false);
 			dataTable.setVisible(true);
+			setDefaultCursor();
 		}
 	};
+	
+	private ChangeHandler cantonSelected = new ChangeHandler() {
+		@Override
+		public void onChange(ChangeEvent event) {
+			if (cantonList.getValue(cantonList.getSelectedIndex()).equals(DEAD_DROPBOX_ITEM))
+				return;
+			
+			setWaitCursor();
+			
+			// Remove everything in datatable and add heading row
+			dataTable.removeAllRows();
+			dataTable.setText(0, 0, "District");
+			dataTable.setText(0, 1,	"Yes Votes");
+			RowFormatter rf = dataTable.getRowFormatter();
+			rf.addStyleName(0, "dataTableHeaderRow");
+			
+			// Clear district dropdown
+			districtList.clear();
+			districtList.addItem("District",DEAD_DROPBOX_ITEM);
+			
+			for(final DistrictData district : getSelectedCanton().districts) {
+				// Fill Data table
+				int row = dataTable.getRowCount();
+				dataTable.setText(row, 0, district.districtName);
+				dataTable.setText(row, 1, Math.round(district.getYesPercent() * 10.0)/ 10.0 + "%");
+				// Also fill district dropdown
+				districtList.addItem(district.districtName, Integer.toString(district.districtID));
+			}
+			districtList.setEnabled(true);
+			districtList.addChangeHandler(districtSelected);
+			setDefaultCursor();
+		}
+	};
+	
+	private ChangeHandler districtSelected = new ChangeHandler() {
+		@Override
+		public void onChange(ChangeEvent event) {
+			if (districtList.getValue(districtList.getSelectedIndex()).equals(DEAD_DROPBOX_ITEM))
+				return;
+			
+			setWaitCursor();
+			
+			// Remove everything in datatable and add heading row
+			dataTable.removeAllRows();
+			dataTable.setText(0, 0, "Town");
+			dataTable.setText(0, 1,	"Yes Votes");
+			RowFormatter rf = dataTable.getRowFormatter();
+			rf.addStyleName(0, "dataTableHeaderRow");
+			
+			for(final TownshipData township : getSelectedDistrict().townships) {
+				// Fill Data table
+				int row = dataTable.getRowCount();
+				dataTable.setText(row, 0, township.townshipName);
+				dataTable.setText(row, 1, Math.round(township.getYesPercent() * 10.0)/ 10.0 + "%");
+			}
+			setDefaultCursor();
+			
+		}
+	};
+	
+	// Getter Methods to retrieve the position of selected items better
+	public int getSelectedPollID() {
+		return Integer.parseInt(pollList.getValue(pollList.getSelectedIndex()));
+	}
+	public CantonData getSelectedCanton() {
+		return curPoll.getCanton(Integer.parseInt(cantonList.getValue(cantonList.getSelectedIndex())));
+	}
+	public DistrictData getSelectedDistrict() {
+		return getSelectedCanton().getDistrict(Integer.parseInt(districtList.getValue(districtList.getSelectedIndex())));
+	}
 
 	// Jquery eyecandy
 	public static native void setWaitCursor() /*-{
