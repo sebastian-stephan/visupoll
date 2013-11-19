@@ -33,6 +33,7 @@ public class Poll implements Serializable {
 	
 	// Prints summary statistics of the poll
 	public void printStats() {
+				
 		System.out.println("Poll Results Switzerland: Registered Voters: " 
 				+ registVoters + ", Delivered Votes: " + deliveredVotes 
 				+ ", Turnout: " + turnout + ", Yes Votes: "
