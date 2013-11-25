@@ -1,7 +1,6 @@
 package com.uni.hs13.visupoll.client;
 
 import java.util.ArrayList;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -412,6 +411,17 @@ public class Home implements EntryPoint {
 		// Load list of polls
 		pollDataService.getListOfPolls(pollListLoaded);
 		setWaitCursor();
+		
+		
+
+		//Widgets implementation.
+		
+		TabellaricViewWidget tabView = new TabellaricViewWidget();
+		GeographicViewWidget geoView = new GeographicViewWidget();
+		SidebarWidget sidebar = new SidebarWidget();
+		vPanel_3.add(tabView);
+		vPanel_3.add(geoView);
+		vPanel_3.add(sidebar);
 
 	}
 
