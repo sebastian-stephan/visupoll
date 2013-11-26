@@ -2,6 +2,7 @@ package com.uni.hs13.visupoll.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -12,6 +13,7 @@ public class Home implements EntryPoint {
 	
 	VerticalPanel vContentPanel;
 	VerticalPanel vSidebarPanel;
+	VerticalPanel vCopyrightPanel;
 	HorizontalPanel hMasterPanel;
 		
 
@@ -31,11 +33,13 @@ public class Home implements EntryPoint {
 	TabellaricViewWidget tabView = new TabellaricViewWidget();
 	//GeographicViewWidget geoView = new GeographicViewWidget();
 	SidebarWidget sidebar = new SidebarWidget();
+	CopyrightWidget copyright = new CopyrightWidget();
+	
 	vContentPanel.add(tabView);
+	vContentPanel.add(copyright);
 	//vPanel_3.add(geoView);
 	vSidebarPanel.add(sidebar);
-	
-	
+
 	hMasterPanel = new HorizontalPanel(); 					// final panel
 	hMasterPanel.setSpacing(10);
 	hMasterPanel.add(vContentPanel);
