@@ -31,7 +31,7 @@ public class Home implements EntryPoint {
 	
 	//Load Widgets
 	TabellaricViewWidget tabView = new TabellaricViewWidget();
-	//GeographicViewWidget geoView = new GeographicViewWidget();
+	GeographicViewWidget geoView = new GeographicViewWidget();
 	SidebarWidget sidebar = new SidebarWidget();
 	CopyrightWidget copyright = new CopyrightWidget();
 	
