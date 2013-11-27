@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class GeographicViewWidget extends Composite {
 
 	// Map SVG Element
-	OMSVGSVGElement mapSVG;
+	static OMSVGSVGElement mapSVG;
 	
 	@UiField
 	HTMLPanel main;

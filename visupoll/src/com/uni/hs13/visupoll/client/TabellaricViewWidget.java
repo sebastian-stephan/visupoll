@@ -23,6 +23,8 @@ import com.uni.hs13.visupoll.datastructures.DistrictData;
 import com.uni.hs13.visupoll.datastructures.Poll;
 import com.uni.hs13.visupoll.datastructures.TownshipData;
 
+import com.uni.hs13.visupoll.client.GeographicViewWidget;
+
 public class TabellaricViewWidget extends Composite {
 	
 	PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT
@@ -33,6 +35,7 @@ public class TabellaricViewWidget extends Composite {
 	protected Poll curPoll = null;
 	
 	FlexTable dataTable;
+	FlexTable demographicDataTable;
 	
 	ListBox cantonList;
 	OptGroupListBox pollList;
@@ -86,6 +89,12 @@ public class TabellaricViewWidget extends Composite {
 		dataTable.getElement().setId("data-table");
 		dataTable.setVisible(false);
 		fullTable.add(dataTable);
+		
+		// Table showing demographic data
+		demographicDataTable = new FlexTable();
+		demographicDataTable.getElement().setId("demographic-data-table");
+		demographicDataTable.setVisible(false);
+		fullTable.add(demographicDataTable);
 
 		// Load list of polls
 		pollDataService.getListOfPolls(pollListLoaded);
@@ -149,13 +158,37 @@ public class TabellaricViewWidget extends Composite {
 			// Save the poll in the instance variable curPoll
 			curPoll = p;
 			
-			// Remove everything in datatable and add heading row
+			// Remove everything in Data Table and add heading row
 			dataTable.removeAllRows();
 			dataTable.setText(0, 0, "Canton");
 			dataTable.setText(0, 1,	"Yes Votes");
 			RowFormatter rf = dataTable.getRowFormatter();
 			rf.addStyleName(0, "dataTableHeaderRow");
 			
+			// Remove everything in Demographic Data Table
+			demographicDataTable.removeAllRows();
+			demographicDataTable.setText(0,1, "German");
+			demographicDataTable.setText(0,2, "French");
+			demographicDataTable.setText(0,3, "Italian");
+			demographicDataTable.setText(0,4, "Switzerland");
+			demographicDataTable.setText(1,0, "Centers");
+			demographicDataTable.setText(2,0, "Agglo");
+			demographicDataTable.setText(3,0, "Cities");
+			demographicDataTable.setText(4,0, "Rural");
+			demographicDataTable.setText(5,0, "Total");
+			rf = demographicDataTable.getRowFormatter();
+			rf.addStyleName(0, "dataTableHeaderRow");
+			
+			// Fill Demographic Data Table
+			if(curPoll.demographicData != null) {
+				for(int r=0; r<5; r++) {
+					for(int c=0; c<4; c++) {
+						demographicDataTable.setText(r+1,c+1,Float.toString(curPoll.demographicData.datatable[r][c]));
+					}
+				}
+			}
+			
+						
 			// Clear canton dropdownlist
 			cantonList.clear();
 			cantonList.addItem("Canton", DEAD_DROPBOX_ITEM);
@@ -172,6 +205,7 @@ public class TabellaricViewWidget extends Composite {
 			cantonList.addChangeHandler(cantonSelected);
 			districtList.setEnabled(false);
 			dataTable.setVisible(true);
+			demographicDataTable.setVisible(true);
 			setDefaultCursor();
 		}
 	};

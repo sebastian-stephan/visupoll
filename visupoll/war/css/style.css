@@ -12,7 +12,7 @@ h1 {
 	text-rendering: optimizeLegibility;
 }
 
-#data-table {
+#data-table, #demographic-data-table {
 	width: 100%;
 	margin-top: 10px;
 	border-collapse: collapse;
@@ -23,7 +23,7 @@ h1 {
 	background-color: #C4F2FF;
 }
 
-#data-table td {
+#data-table td, #demographic-data-table td {
 	padding: 3px 10px 3px 10px;
 	border: 1px solid gray;
 }
