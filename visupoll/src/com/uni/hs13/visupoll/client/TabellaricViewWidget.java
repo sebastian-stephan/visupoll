@@ -1,6 +1,7 @@
 package com.uni.hs13.visupoll.client;
 
 import java.util.ArrayList;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -22,7 +23,6 @@ import com.uni.hs13.visupoll.datastructures.CantonData;
 import com.uni.hs13.visupoll.datastructures.DistrictData;
 import com.uni.hs13.visupoll.datastructures.Poll;
 import com.uni.hs13.visupoll.datastructures.TownshipData;
-
 import com.uni.hs13.visupoll.client.GeographicViewWidget;
 
 public class TabellaricViewWidget extends Composite {
@@ -200,6 +200,8 @@ public class TabellaricViewWidget extends Composite {
 				dataTable.setText(row, 1, Math.round(canton.getYesPercent() * 10.0)/ 10.0 + "%");
 				// Also fill Canton Dropdown
 				cantonList.addItem(canton.cantonNameLong, Integer.toString(canton.cantonID));
+				// Color cantons
+				GeographicViewWidget.mapSVG.getElementById(Integer.toString(canton.cantonID)).setAttribute("fill", GeographicViewWidget.getVoteColor(canton.getYesPercent()/100));
 			}
 			cantonList.setEnabled(true);
 			cantonList.addChangeHandler(cantonSelected);
@@ -280,6 +282,7 @@ public class TabellaricViewWidget extends Composite {
 		return getSelectedCanton().getDistrict(Integer.parseInt(districtList.getValue(districtList.getSelectedIndex())));
 	}
 
+	
 	// JQuery eyecandy
 	public static native void setWaitCursor() /*-{
 		$wnd.jQuery("body").css("cursor", "wait");

@@ -27,3 +27,23 @@ h1 {
 	padding: 3px 10px 3px 10px;
 	border: 1px solid gray;
 }
+
+svg {
+	stroke-linejoin: round;
+	stroke:#000;
+	fill: none;
+}
+
+#bezirke path {
+	visibility: hidden;
+	stroke-width: 0px;
+}
+
+#townships path {
+	visibility: hidden;
+}
+
+#townships path.lake {
+	fill: lightblue;
+	visibility: visible;
+}
