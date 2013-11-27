@@ -17,7 +17,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class GeographicViewWidget extends Composite {
 
+	// Map SVG Element
 	OMSVGSVGElement mapSVG;
+	
 	@UiField
 	HTMLPanel main;
 	
@@ -33,11 +35,13 @@ public class GeographicViewWidget extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		//TODO: Code goes here.
+		loadMap();
+		
 		//For every object that has to be added write: main.add(<name>);
 		
 	}
 	
-	public void addMap() {
+	public void loadMap() {
 		String resourceUrl = "schweiz.svg";
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, resourceUrl);
 			requestBuilder.setCallback(new RequestCallback() {
@@ -47,7 +51,7 @@ public class GeographicViewWidget extends Composite {
 
 				private void onSuccess(Request request, Response response) {
 					mapSVG = OMSVGParser.parse(response.getText());
-					//main.getElement().appendChild(mapSVG.getElement());
+					main.getElement().appendChild(mapSVG.getElement());
 				}
 				public void onResponseReceived(Request request, Response response) {
 					if (response.getStatusCode() == Response.SC_OK) {
