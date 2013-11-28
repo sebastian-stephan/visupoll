@@ -90,11 +90,13 @@ public class TabellaricViewWidget extends Composite {
 		dataTable.setVisible(false);
 		fullTable.add(dataTable);
 		
+		
 		// Table showing demographic data
 		demographicDataTable = new FlexTable();
 		demographicDataTable.getElement().setId("demographic-data-table");
 		demographicDataTable.setVisible(false);
 		fullTable.add(demographicDataTable);
+		
 
 		// Load list of polls
 		pollDataService.getListOfPolls(pollListLoaded);
@@ -207,7 +209,7 @@ public class TabellaricViewWidget extends Composite {
 			cantonList.addChangeHandler(cantonSelected);
 			districtList.setEnabled(false);
 			dataTable.setVisible(true);
-			demographicDataTable.setVisible(true);
+			demographicDataTable.setVisible(false);  //<-- To be visible set true!
 			setDefaultCursor();
 		}
 	};

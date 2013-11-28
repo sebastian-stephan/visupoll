@@ -43,8 +43,8 @@ public class Home implements EntryPoint {
 	TabellaricViewWidget tabView = new TabellaricViewWidget();
 	GeographicViewWidget geoView = new GeographicViewWidget();
 	tContentTab.setWidth("830px");
-	tContentTab.add(tabView, "Tabelle");
-	tContentTab.add(geoView, "Karte");
+	tContentTab.add(tabView, "Table");
+	tContentTab.add(geoView, "Map");
 	tContentTab.selectTab(0);
 	hMainPanel.add(tContentTab);
 	
