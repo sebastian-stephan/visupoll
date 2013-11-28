@@ -172,7 +172,7 @@ public class TabellaricViewWidget extends Composite {
 			// Remove everything in Data Table and add heading row
 			dataTable.removeAllRows();
 			dataTable.setText(0, 0, "Canton");
-			dataTable.setText(0, 1,	"Yes Votes");
+			dataTable.setText(0, 1,	"Percent Yes");
 			
 			//check if turnout available --> if yes generate column for turnout
 			if (curPoll.cantons.get(0).getTurnout() > 0) {
@@ -215,6 +215,7 @@ public class TabellaricViewWidget extends Composite {
 				demoDataMissing.setVisible(false);
 			}
 			
+			
 						
 			// Clear canton dropdownlist
 			cantonList.clear();
@@ -225,6 +226,9 @@ public class TabellaricViewWidget extends Composite {
 				int row = dataTable.getRowCount();
 				dataTable.setText(row, 0, canton.cantonNameLong);
 				dataTable.setText(row, 1, Math.round(canton.getYesPercent() * 10.0)/ 10.0 + "%");
+				
+				//color row percent yes
+				dataTable.getCellFormatter().getElement(row, 1).getStyle().setBackgroundColor(GeographicViewWidget.getVoteColor(canton.getYesPercent()/100));
 				
 				//check if turnout data available: if yes then load data.
 				if (curPoll.cantons.get(0).getTurnout() > 0) {
