@@ -56,6 +56,7 @@ public class Home implements EntryPoint {
 	
 	// Master panel (main + copyright)
 	vMasterPanel.add(hMainPanel);
+	vMasterPanel.setSpacing(10);
 	CopyrightWidget copyright = new CopyrightWidget();
 	vMasterPanel.add(copyright);
 	
