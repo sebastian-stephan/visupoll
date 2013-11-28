@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,6 +45,8 @@ public class TabellaricViewWidget extends Composite {
 	HorizontalPanel navigation;
 	VerticalPanel fullTable;
 	
+	Label demoDataMissing; //used for clarification if demographic data is missing.
+	
 	@UiField
 	HTMLPanel main;	
 	
@@ -73,6 +76,11 @@ public class TabellaricViewWidget extends Composite {
 		districtList.setWidth("150px");
 		districtList.addItem("District", DEAD_DROPBOX_ITEM);
 		districtList.setEnabled(false);
+		
+		//Label used for clarification if demographic data is missing.
+		demoDataMissing = new Label();
+		demoDataMissing.setText("Currently no data is available of demographic data distribution.");
+		demoDataMissing.setVisible(false);
 
 		navigation.add(pollList);
 		navigation.add(cantonList);
@@ -96,6 +104,7 @@ public class TabellaricViewWidget extends Composite {
 		demographicDataTable.getElement().setId("demographic-data-table");
 		demographicDataTable.setVisible(false);
 		fullTable.add(demographicDataTable);
+		fullTable.add(demoDataMissing);
 		
 
 		// Load list of polls
@@ -164,6 +173,12 @@ public class TabellaricViewWidget extends Composite {
 			dataTable.removeAllRows();
 			dataTable.setText(0, 0, "Canton");
 			dataTable.setText(0, 1,	"Yes Votes");
+			
+			//check if turnout available --> if yes generate column for turnout
+			if (curPoll.cantons.get(0).getTurnout() > 0) {
+				dataTable.setText(0, 2, "Turnout");
+			}
+			
 			RowFormatter rf = dataTable.getRowFormatter();
 			rf.addStyleName(0, "dataTableHeaderRow");
 			
@@ -190,6 +205,16 @@ public class TabellaricViewWidget extends Composite {
 				}
 			}
 			
+			//check if demographic data is available. If not then show message label.
+			if (curPoll.demographicData == null) {
+				demographicDataTable.setVisible(false);
+				demoDataMissing.setVisible(true);
+				
+			} else {
+				demographicDataTable.setVisible(true);
+				demoDataMissing.setVisible(false);
+			}
+			
 						
 			// Clear canton dropdownlist
 			cantonList.clear();
@@ -200,6 +225,12 @@ public class TabellaricViewWidget extends Composite {
 				int row = dataTable.getRowCount();
 				dataTable.setText(row, 0, canton.cantonNameLong);
 				dataTable.setText(row, 1, Math.round(canton.getYesPercent() * 10.0)/ 10.0 + "%");
+				
+				//check if turnout data available: if yes then load data.
+				if (curPoll.cantons.get(0).getTurnout() > 0) {
+					dataTable.setText(row, 2, Math.round(canton.getTurnout() * 10.0)/ 10.0 + "%");
+				}
+				
 				// Also fill Canton Dropdown
 				cantonList.addItem(canton.cantonNameLong, Integer.toString(canton.cantonID));
 				// Color cantons
@@ -209,7 +240,6 @@ public class TabellaricViewWidget extends Composite {
 			cantonList.addChangeHandler(cantonSelected);
 			districtList.setEnabled(false);
 			dataTable.setVisible(true);
-			demographicDataTable.setVisible(false);  //<-- To be visible set true!
 			setDefaultCursor();
 		}
 	};
