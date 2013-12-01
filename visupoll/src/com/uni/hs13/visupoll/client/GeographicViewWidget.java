@@ -2,6 +2,7 @@ package com.uni.hs13.visupoll.client;
 
 import org.vectomatic.dom.svg.OMElement;
 import org.vectomatic.dom.svg.OMNode;
+import org.vectomatic.dom.svg.OMSVGAnimationElement;
 import org.vectomatic.dom.svg.OMSVGPathElement;
 import org.vectomatic.dom.svg.OMSVGSVGElement;
 import org.vectomatic.dom.svg.utils.OMSVGParser;
@@ -102,8 +103,9 @@ public class GeographicViewWidget extends Composite {
 			canton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
+					OMSVGPathElement fromViewbox = zoomedCanton;
 					zoomedCanton = ((OMSVGPathElement) event.getSource());
-					zoomToCanton(Integer.parseInt(zoomedCanton.getId()));
+					zoomToCanton(Integer.parseInt(zoomedCanton.getId()), fromViewbox);
 				}
 			});
 			// Add mouse over handler
@@ -111,7 +113,7 @@ public class GeographicViewWidget extends Composite {
 		}
 	}
 	
-	private static void zoomToCanton(int cantonID) {
+	private static void zoomToCanton(int cantonID, OMSVGPathElement fromViewbox) {
 		// Color districts
 		for(final DistrictData district : Home.curPoll.getCanton(cantonID).districts) {
 			
@@ -123,8 +125,26 @@ public class GeographicViewWidget extends Composite {
 			}
 		}
 		// Zoom
-		mapSVG.setViewBox(zoomedCanton.getBBox());
-		
+		//mapSVG.setViewBox(zoomedCanton.getBBox());
+		OMSVGAnimationElement anim;
+		anim = (OMSVGAnimationElement)mapSVG.getElementById("zoom");
+		String sOldViewbox = "";
+		if(fromViewbox == null)
+			sOldViewbox = "0 0 800 509";
+		else {
+			sOldViewbox = fromViewbox.getBBox().getX() + " " +
+					fromViewbox.getBBox().getY() + " " +
+					fromViewbox.getBBox().getWidth() + " " +
+					fromViewbox.getBBox().getHeight();
+		}
+		String newViewbox = zoomedCanton.getBBox().getX() + " " +			
+							zoomedCanton.getBBox().getY() + " " +
+							zoomedCanton.getBBox().getWidth() + " " +
+							zoomedCanton.getBBox().getHeight();
+		anim.setAttribute("from", sOldViewbox);
+		anim.setAttribute("to", newViewbox);
+		anim.beginElement();
+	
 		// Make canton transparent, so one can see through
 		mapSVG.getElementById(Integer.toString(cantonID)).setAttribute("class", "selectedCanton");
 		
@@ -139,7 +159,18 @@ public class GeographicViewWidget extends Composite {
 	}
 	
 	private void zoomOut() {
-		mapSVG.setViewBox(0, 0, 800, 509);
+		//mapSVG.setViewBox(0, 0, 800, 509);
+		OMSVGAnimationElement anim;
+		anim = (OMSVGAnimationElement)mapSVG.getElementById("zoom");
+		String oldViewbox = zoomedCanton.getBBox().getX() + " " +
+							zoomedCanton.getBBox().getY() + " " +
+							zoomedCanton.getBBox().getWidth() + " " +
+							zoomedCanton.getBBox().getHeight();
+		anim.setAttribute("from", oldViewbox);
+		anim.setAttribute("to", "0 0 800 509");
+		anim.beginElement();
+		
+		zoomedCanton=null;
 		
 		for(int i=1;i<=26;i++) {
 			mapSVG.getElementById(Integer.toString(i)).setAttribute("class", "");
