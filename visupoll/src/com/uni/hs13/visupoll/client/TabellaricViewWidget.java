@@ -199,7 +199,7 @@ public class TabellaricViewWidget extends Composite {
 			if(Home.curPoll.demographicData != null) {
 				for(int r=0; r<5; r++) {
 					for(int c=0; c<4; c++) {
-						demographicDataTable.setText(r+1,c+1,Float.toString(Home.curPoll.demographicData.datatable[r][c]));
+						demographicDataTable.setText(r+1,c+1,Math.round(Home.curPoll.demographicData.datatable[r][c] * 10.0)/ 10.0 + "%");
 					}
 				}
 			}
@@ -244,7 +244,7 @@ public class TabellaricViewWidget extends Composite {
 			districtList.setEnabled(false);
 			dataTable.setVisible(true);
 			
-			// Debug
+			// Color districts and townships
 			GeographicViewWidget.colorEverything();
 			
 			setDefaultCursor();
