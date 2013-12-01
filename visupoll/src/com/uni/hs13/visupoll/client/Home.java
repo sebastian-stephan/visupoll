@@ -5,9 +5,13 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.uni.hs13.visupoll.datastructures.Poll;
 
 
 public class Home implements EntryPoint {
+	
+	// Data
+	public static Poll curPoll = null;
 	
 	/*	Layout structure:
 

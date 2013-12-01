@@ -33,7 +33,6 @@ public class TabellaricViewWidget extends Composite {
 	
 	private static final String DEAD_DROPBOX_ITEM = "NA";
 	
-	protected Poll curPoll = null;
 	
 	FlexTable dataTable;
 	FlexTable demographicDataTable;
@@ -167,7 +166,7 @@ public class TabellaricViewWidget extends Composite {
 		@Override
 		public void onSuccess(Poll p) {
 			// Save the poll in the instance variable curPoll
-			curPoll = p;
+			Home.curPoll = p;
 			
 			// Remove everything in Data Table and add heading row
 			dataTable.removeAllRows();
@@ -175,7 +174,7 @@ public class TabellaricViewWidget extends Composite {
 			dataTable.setText(0, 1,	"Percent Yes");
 			
 			//check if turnout available --> if yes generate column for turnout
-			if (curPoll.cantons.get(0).getTurnout() > 0) {
+			if (Home.curPoll.cantons.get(0).getTurnout() > 0) {
 				dataTable.setText(0, 2, "Turnout");
 			}
 			
@@ -197,16 +196,16 @@ public class TabellaricViewWidget extends Composite {
 			rf.addStyleName(0, "dataTableHeaderRow");
 			
 			// Fill Demographic Data Table
-			if(curPoll.demographicData != null) {
+			if(Home.curPoll.demographicData != null) {
 				for(int r=0; r<5; r++) {
 					for(int c=0; c<4; c++) {
-						demographicDataTable.setText(r+1,c+1,Float.toString(curPoll.demographicData.datatable[r][c]));
+						demographicDataTable.setText(r+1,c+1,Float.toString(Home.curPoll.demographicData.datatable[r][c]));
 					}
 				}
 			}
 			
 			//check if demographic data is available. If not then show message label.
-			if (curPoll.demographicData == null) {
+			if (Home.curPoll.demographicData == null) {
 				demographicDataTable.setVisible(false);
 				demoDataMissing.setVisible(true);
 				
@@ -215,13 +214,12 @@ public class TabellaricViewWidget extends Composite {
 				demoDataMissing.setVisible(false);
 			}
 			
-			
 						
 			// Clear canton dropdownlist
 			cantonList.clear();
 			cantonList.addItem("Canton", DEAD_DROPBOX_ITEM);
 
-			for (final CantonData canton : curPoll.cantons) {
+			for (final CantonData canton : Home.curPoll.cantons) {
 				// Fill data table
 				int row = dataTable.getRowCount();
 				dataTable.setText(row, 0, canton.cantonNameLong);
@@ -231,20 +229,26 @@ public class TabellaricViewWidget extends Composite {
 				dataTable.getCellFormatter().getElement(row, 1).getStyle().setBackgroundColor(GeographicViewWidget.getVoteColor(canton.getYesPercent()/100));
 				
 				//check if turnout data available: if yes then load data.
-				if (curPoll.cantons.get(0).getTurnout() > 0) {
+				if (Home.curPoll.cantons.get(0).getTurnout() > 0) {
 					dataTable.setText(row, 2, Math.round(canton.getTurnout() * 10.0)/ 10.0 + "%");
 				}
 				
 				// Also fill Canton Dropdown
 				cantonList.addItem(canton.cantonNameLong, Integer.toString(canton.cantonID));
 				// Color cantons
-				GeographicViewWidget.mapSVG.getElementById(Integer.toString(canton.cantonID)).setAttribute("fill", GeographicViewWidget.getVoteColor(canton.getYesPercent()/100));
+				GeographicViewWidget.colorCanton(canton.cantonID, canton.getYesPercent()/100);
+				
 			}
 			cantonList.setEnabled(true);
 			cantonList.addChangeHandler(cantonSelected);
 			districtList.setEnabled(false);
 			dataTable.setVisible(true);
+			
+			// Debug
+			GeographicViewWidget.colorEverything();
+			
 			setDefaultCursor();
+			
 		}
 	};
 	
@@ -277,6 +281,7 @@ public class TabellaricViewWidget extends Composite {
 			}
 			districtList.setEnabled(true);
 			districtList.addChangeHandler(districtSelected);
+			
 			setDefaultCursor();
 		}
 	};
@@ -312,7 +317,7 @@ public class TabellaricViewWidget extends Composite {
 		return Integer.parseInt(pollList.getValue(pollList.getSelectedIndex()));
 	}
 	public CantonData getSelectedCanton() {
-		return curPoll.getCanton(Integer.parseInt(cantonList.getValue(cantonList.getSelectedIndex())));
+		return Home.curPoll.getCanton(Integer.parseInt(cantonList.getValue(cantonList.getSelectedIndex())));
 	}
 	public DistrictData getSelectedDistrict() {
 		return getSelectedCanton().getDistrict(Integer.parseInt(districtList.getValue(districtList.getSelectedIndex())));
