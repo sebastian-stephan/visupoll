@@ -225,8 +225,10 @@ public class TabellaricViewWidget extends Composite {
 				dataTable.setText(row, 0, canton.cantonNameLong);
 				dataTable.setText(row, 1, Math.round(canton.getYesPercent() * 10.0)/ 10.0 + "%");
 				
-				//color row percent yes
+				/*
+				//color row percent yes TODO: UNCOMMENT FOR SPRINT 3!
 				dataTable.getCellFormatter().getElement(row, 1).getStyle().setBackgroundColor(GeographicViewWidget.getVoteColor(canton.getYesPercent()/100));
+				*/
 				
 				//check if turnout data available: if yes then load data.
 				if (Home.curPoll.cantons.get(0).getTurnout() > 0) {
