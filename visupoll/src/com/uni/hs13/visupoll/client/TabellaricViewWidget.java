@@ -227,7 +227,7 @@ public class TabellaricViewWidget extends Composite {
 				
 				
 				//color row percent yes TODO: UNCOMMENT FOR SPRINT 3!
-				//dataTable.getCellFormatter().getElement(row, 1).getStyle().setBackgroundColor(GeographicViewWidget.getVoteColor(canton.getYesPercent()/100));
+				dataTable.getCellFormatter().getElement(row, 1).getStyle().setBackgroundColor(GeographicViewWidget.getVoteColor(canton.getYesPercent()/100));
 				
 				
 				//check if turnout data available: if yes then load data.
