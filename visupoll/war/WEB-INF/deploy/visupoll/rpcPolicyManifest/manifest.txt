@@ -1,3 +1,2 @@
 # Module visupoll
 # RPC service class, partial path of RPC policy file
-com.uni.hs13.visupoll.client.rpc.PollDataService, E8B727905B4DE859FF1D1C57387D3508.gwt.rpc

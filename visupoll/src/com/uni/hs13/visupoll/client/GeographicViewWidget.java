@@ -25,10 +25,12 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.uni.hs13.visupoll.datastructures.CantonData;
 import com.uni.hs13.visupoll.datastructures.DistrictData;
 //canvas
+import com.uni.hs13.visupoll.datastructures.TownshipData;
 
 public class GeographicViewWidget extends Composite {
 	interface GeographicViewWidgetUiBinder extends
@@ -47,6 +49,8 @@ public class GeographicViewWidget extends Composite {
 	static OMSVGPathElement zoomedCanton = null;		// References path of the current zoomed in canton
 	static OMSVGAnimationElement anim;
 	static Button zoomOutButton = new Button("Zoom Out"); // Button to zoom back out
+	static ToggleButton townToggleButton = new ToggleButton("Show townships"); // Button to show townships
+	static boolean showTownships = false;
 	static Label toolTip = new Label("tooltip");
 	
 	// Constructor
@@ -67,6 +71,21 @@ public class GeographicViewWidget extends Composite {
 			}
 		});
 		main.add(zoomOutButton);
+		
+		// Initialize town toggle button
+		townToggleButton.getElement().setAttribute("style", "position: absolute; top: 50px; left: 20px");
+		townToggleButton.setVisible(false);
+		townToggleButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (showTownships)
+					changeCSSRule(3, 4, "visibility", "visible");					
+				else
+					changeCSSRule(3, 4, "visibility", "hidden");
+				showTownships = !showTownships;
+			}
+		});
+		main.add(townToggleButton);
 		
 		// Tooltip
 		toolTip.getElement().setAttribute("id", "tooltip");
@@ -131,19 +150,7 @@ public class GeographicViewWidget extends Composite {
 	}
 	
 	private static void zoomToCanton(int cantonID, OMSVGPathElement fromViewbox) {
-		// Color districts
-		for(final DistrictData district : Home.curPoll.getCanton(cantonID).districts) {
-			
-			if(DOM.getElementById(Integer.toString(district.districtID)) != null) {
-				OMElement e = mapSVG.getElementById(Integer.toString(district.districtID));
-				e.setAttribute("fill", getVoteColor(district.getYesPercent()/100));
-			} else {
-				System.out.println("Couldn't find " + Integer.toString(district.districtID) + " "  + district.districtName);
-			}
-		}
 		// Zoom
-		//mapSVG.setViewBox(zoomedCanton.getBBox());
-		
 		anim = (OMSVGAnimationElement)mapSVG.getElementById("zoom");
 		String sOldViewbox = "";
 		if(fromViewbox == null)
@@ -171,8 +178,9 @@ public class GeographicViewWidget extends Composite {
 				mapSVG.getElementById(Integer.toString(i)).setAttribute("class", "notSelectedCanton");
 		}
 		
-		// Show zoom out button
+		// Show zoom out button and toggle button
 		zoomOutButton.setVisible(true);
+		townToggleButton.setVisible(true);
 	}
 	
 	private void zoomOut() {
@@ -194,8 +202,10 @@ public class GeographicViewWidget extends Composite {
 		}
 		
 		zoomOutButton.setVisible(false);
+		townToggleButton.setVisible(false);
 	}
 	
+	// Colors all districts and all towns.
 	public static void colorEverything() {
 		for(final CantonData canton : Home.curPoll.cantons) {
 			for(final DistrictData district : Home.curPoll.getCanton(canton.cantonID).districts) {
@@ -203,16 +213,17 @@ public class GeographicViewWidget extends Composite {
 				if(DOM.getElementById(Integer.toString(district.districtID)) == null)
 					System.out.println("Couldn't find District: " + Integer.toString(district.districtID) + " "  + district.districtName);
 				else {
-					
+					// Color district
 					mapSVG.getElementById(Integer.toString(district.districtID)).setAttribute("fill", getVoteColor(district.getYesPercent()/100));
-					/*
+					
 					for(final TownshipData town : district.townships) {
 						// Check for townships
 						if(DOM.getElementById("T_" + Integer.toString(town.townshipID)) == null)
 							System.out.println("Couldn't find Town: " + Integer.toString(town.townshipID) + " "  + town.townshipName);
+						else // Color town
 							mapSVG.getElementById("T_" + Integer.toString(town.townshipID)).setAttribute("fill", getVoteColor(town.getYesPercent()/100));
 					}
-					*/
+					
 				}
 			}
 		}
@@ -258,6 +269,12 @@ public class GeographicViewWidget extends Composite {
 				renderCallback: finishedRendering,
 				ignoreAnimation: false
 			});
+	}-*/;
+	
+	public static native void changeCSSRule(int styleSheet, int rule, String attribute, String value)/*-{
+		// IE uses rules instead of cssRules
+		var rules = $wnd.document.styleSheets[styleSheet].rules || $wnd.document.styleSheets[styleSheet].cssRules;
+		rules[rule].style[attribute] = value;
 	}-*/;
 
 }

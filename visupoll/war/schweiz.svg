@@ -27,10 +27,6 @@
 		stroke: #555;
 	}
 
-	#townships {
-		visibility: hidden;
-	}
-
 	#lakes {
 		fill: lightblue;
 		stroke: #555;
