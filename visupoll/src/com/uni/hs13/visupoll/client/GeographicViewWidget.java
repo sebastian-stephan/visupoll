@@ -99,7 +99,7 @@ public class GeographicViewWidget extends Composite {
 		canvas = Canvas.createIfSupported();
 		canvas.getElement().setAttribute("width", "800");
 		canvas.getElement().setAttribute("height", "509");
-		canvas.getElement().setAttribute("style", "visibility: hidden; position: absolute");
+		canvas.getElement().setAttribute("style", "visibility: hidden; position: absolute;");
 		canvas.getElement().setId("canvas");
 		main.add(canvas);
 	}
@@ -145,7 +145,7 @@ public class GeographicViewWidget extends Composite {
 				}
 			});
 			// Add mouse over handler
-			//TODO jQueryActivateTooltips();
+			jQueryActivateTooltips();
 		}
 	}
 	
@@ -256,15 +256,65 @@ public class GeographicViewWidget extends Composite {
 		);
 		
 		$wnd.jQuery("#kantone path").hover(function(){
-				$wnd.jQuery('#tooltip').text($wnd.jQuery(this).attr('id-cantonnameshort'));
-    			$wnd.jQuery('#tooltip').position({at: 'left top', of: $wnd.jQuery(this), my: 'left top', collision: 'fit'})
+				var cantonID = $wnd.jQuery(this).attr('id');
+				var tooltipText = @com.uni.hs13.visupoll.client.GeographicViewWidget::getCantonTooltip(Ljava/lang/String;)(cantonID);
+				$wnd.jQuery('#tooltip').text(tooltipText);
+    			$wnd.jQuery('#tooltip').position({at: 'center top', of: $wnd.jQuery(this), my: 'center bottom', collision: 'flip flip'})
 				$wnd.jQuery('#tooltip').fadeIn(200);
-  			},function(){
-
-  			}
+  			},function(){}
+		);
+		
+		$wnd.jQuery("#bezirke path").hover(function(){
+				var cantonID = $wnd.jQuery(this).attr('data-cantonid');
+				var districtID = $wnd.jQuery(this).attr('id');
+				var tooltipText = @com.uni.hs13.visupoll.client.GeographicViewWidget::getDistrictTooltip(Ljava/lang/String;Ljava/lang/String;)(cantonID,districtID);
+				$wnd.jQuery('#tooltip').text(tooltipText);
+    			$wnd.jQuery('#tooltip').position({at: 'center top', of: $wnd.jQuery(this), my: 'center bottom', collision: 'flip flip'})
+				$wnd.jQuery('#tooltip').fadeIn(200);
+  			},function(){}
+		);
+		
+		$wnd.jQuery("#townships path").hover(function(){
+				var cantonID = $wnd.jQuery(this).attr('data-cantonid');
+				var districtID = $wnd.jQuery(this).attr('data-districtid');
+				var townshipID = $wnd.jQuery(this).attr('id');
+				var tooltipText = @com.uni.hs13.visupoll.client.GeographicViewWidget::getTownshipTooltip(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(cantonID,districtID,townshipID);
+				$wnd.jQuery('#tooltip').text(tooltipText);
+    			$wnd.jQuery('#tooltip').position({at: 'center top', of: $wnd.jQuery(this), my: 'center bottom', collision: 'flip flip'})
+				$wnd.jQuery('#tooltip').fadeIn(200);
+  			},function(){}
 		);
 		
 	}-*/;
+	
+	
+	public static String getCantonTooltip(String cantonID) {
+		String text;
+		CantonData c = Home.curPoll.getCanton(Integer.parseInt(cantonID));
+		text = 	c.getCantonNameLong() + "\n" +
+				Math.round(c.getYesPercent() * 10.0)/ 10.0 + "%";
+		return text;
+	}
+	
+	public static String getDistrictTooltip(String cantonID, String districtID) {
+		String text;
+		DistrictData d = Home.curPoll.getCanton(Integer.parseInt(cantonID))
+				.getDistrict(Integer.parseInt(districtID));
+		text = 	d.getDistrictName() + "\n" +
+				Math.round(d.getYesPercent() * 10.0)/ 10.0 + "%";
+		return text;
+	}
+	
+	public static String getTownshipTooltip(String cantonID, String districtID, String townshipID) {
+		String text;
+		townshipID = townshipID.substring(2);
+		TownshipData t = Home.curPoll.getCanton(Integer.parseInt(cantonID))
+				.getDistrict(Integer.parseInt(districtID))
+				.getTownship(Integer.parseInt(townshipID));
+		text = 	t.getTownshipName() + "\n" +
+				Math.round(t.getYesPercent() * 10.0)/ 10.0 + "%";
+		return text;
+	}
 	
 	public static native void svgToCanvas()/*-{
 		var finishedRendering = function() {
@@ -283,4 +333,5 @@ public class GeographicViewWidget extends Composite {
 		rules[rule].style[attribute] = value;
 	}-*/;
 
+	
 }

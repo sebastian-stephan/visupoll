@@ -4,7 +4,6 @@
 		stroke-linejoin: round;
 		stroke:#000;
 		stroke-width: 0.1px;
-		fill: #111;
 	}
 
 	#kantone {

@@ -325,7 +325,6 @@ public class TabellaricViewWidget extends Composite {
 		return getSelectedCanton().getDistrict(Integer.parseInt(districtList.getValue(districtList.getSelectedIndex())));
 	}
 
-	
 
 
 }
