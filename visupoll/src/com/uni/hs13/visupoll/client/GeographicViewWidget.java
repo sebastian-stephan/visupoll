@@ -1,6 +1,5 @@
 package com.uni.hs13.visupoll.client;
 
-import org.vectomatic.dom.svg.OMElement;
 import org.vectomatic.dom.svg.OMNode;
 import org.vectomatic.dom.svg.OMSVGAnimationElement;
 import org.vectomatic.dom.svg.OMSVGPathElement;
@@ -12,6 +11,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -50,7 +51,7 @@ public class GeographicViewWidget extends Composite {
 	static OMSVGAnimationElement anim;
 	static Button zoomOutButton = new Button("Zoom Out"); // Button to zoom back out
 	static ToggleButton townToggleButton = new ToggleButton("Show townships"); // Button to show townships
-	static boolean showTownships = false;
+	
 	static Label toolTip = new Label("tooltip");
 	
 	// Constructor
@@ -78,11 +79,10 @@ public class GeographicViewWidget extends Composite {
 		townToggleButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if (showTownships)
+				if (!townToggleButton.isDown())
 					changeCSSRule(3, 4, "visibility", "visible");					
 				else
 					changeCSSRule(3, 4, "visibility", "hidden");
-				showTownships = !showTownships;
 			}
 		});
 		main.add(townToggleButton);
@@ -180,7 +180,8 @@ public class GeographicViewWidget extends Composite {
 		
 		// Show zoom out button and toggle button
 		zoomOutButton.setVisible(true);
-		townToggleButton.setVisible(true);
+		if (!Home.curPoll.cantons.get(0).districts.get(0).townships.isEmpty())
+			townToggleButton.setVisible(true);
 	}
 	
 	private void zoomOut() {
@@ -216,6 +217,11 @@ public class GeographicViewWidget extends Composite {
 					// Color district
 					mapSVG.getElementById(Integer.toString(district.districtID)).setAttribute("fill", getVoteColor(district.getYesPercent()/100));
 					
+					if (district.townships.isEmpty()) {
+						townToggleButton.setDown(false);
+						townToggleButton.setVisible(false);
+						changeCSSRule(3, 4, "visibility", "visible"); // show districts
+					}
 					for(final TownshipData town : district.townships) {
 						// Check for townships
 						if(DOM.getElementById("T_" + Integer.toString(town.townshipID)) == null)
