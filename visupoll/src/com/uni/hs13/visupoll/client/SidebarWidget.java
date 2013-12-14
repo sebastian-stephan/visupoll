@@ -1,5 +1,7 @@
 package com.uni.hs13.visupoll.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -7,8 +9,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -18,6 +24,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.uni.hs13.visupoll.client.rpc.PollDataService;
+import com.uni.hs13.visupoll.client.rpc.PollDataServiceAsync;
+import com.uni.hs13.visupoll.datastructures.Poll;
 
 //This class builds the sidebar logic with four buttons.
 public class SidebarWidget extends Composite {
@@ -32,39 +41,29 @@ public class SidebarWidget extends Composite {
 	final DialogBox helpDialog;
 	final DialogBox aboutDialog;
 	final DialogBox commentDialog;
-	final DialogBox shareDialog;
 	
-	TextArea helpTextArea;
-	TextArea aboutTextArea;
-	TextArea commentTextArea;
-	TextArea commentEmailArea;
-	TextArea commentBodyArea;
-	TextArea shareTextArea;
-	TextArea shareEmailArea;
+	static TextArea helpTextArea;
+	static TextArea aboutTextArea;
+	static TextArea commentEmailArea;
+	static TextArea commentBodyArea;
 	
-	Button helpCloseButton;
-	Button aboutCloseButton;
-	Button commentCloseButton;
-	Button commentSendButton;
-	Button commentCancelButton;
-	Button shareCloseButton;
-	Button shareSendButton;
-	Button shareCancelButton;
+	static Button helpCloseButton;
+	static Button aboutCloseButton;
+	static Button commentCloseButton;
+	static Button commentSendButton;
+	static Button commentCancelButton;
 	
-	VerticalPanel help_vPanel;
-	VerticalPanel about_vPanel;
-	VerticalPanel comment_vPanel;
-	VerticalPanel share_vPanel;
+	static VerticalPanel help_vPanel;
+	static VerticalPanel about_vPanel;
+	static VerticalPanel comment_vPanel;
 	
-	VerticalPanel mainSidebarPanel;
+	static VerticalPanel mainSidebarPanel;
 	
-	HorizontalPanel comment_hPanel;
-	HorizontalPanel share_hPanel;
+	static HorizontalPanel comment_hPanel;
 	
-	Button helpButton;
-	Button aboutButton;
-	Button commentButton;
-	Button shareButton;
+	static Button helpButton;
+	static Button aboutButton;
+	static Button commentButton;
 
 	
 	@UiField
@@ -181,7 +180,7 @@ public class SidebarWidget extends Composite {
 		//--Start Comment Button
 		
 		commentDialog = new DialogBox();
-		commentDialog.setText("Comment");
+		commentDialog.setText("Share");
 		commentDialog.setGlassEnabled(true);
 		commentDialog.setAnimationEnabled(true);
 
@@ -228,6 +227,19 @@ public class SidebarWidget extends Composite {
 		comment_hPanel = new HorizontalPanel();
 		comment_hPanel.setSpacing(10);
 		commentSendButton = new Button("Send");
+		commentSendButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Home.setWaitCursor();
+				if (GeographicViewWidget.zoomedCanton != null)
+					GeographicViewWidget.mapSVG.setViewBox(GeographicViewWidget.zoomedCanton.getBBox());
+				else
+					GeographicViewWidget.mapSVG.setViewBox(0, 0, 800, 509);
+				
+				GeographicViewWidget.svgToCanvas();
+				commentDialog.hide();
+			}
+		});
 		commentSendButton.setWidth("100px");
 		
 		commentCancelButton = new Button("Cancel");
@@ -249,7 +261,7 @@ public class SidebarWidget extends Composite {
 		comment_vPanel.setCellHorizontalAlignment(commentBodyArea, HasHorizontalAlignment.ALIGN_CENTER);
 		comment_vPanel.setCellHorizontalAlignment(comment_hPanel, HasHorizontalAlignment.ALIGN_CENTER);
 		
-		commentButton = new Button("Comment");
+		commentButton = new Button("Share");
 		commentButton.setWidth("100px");
 		commentButton.addClickHandler(new ClickHandler() {
 
@@ -267,75 +279,48 @@ public class SidebarWidget extends Composite {
 		
 		//--End Comment Button
 		
-		//--Start Share Button
-		
-		shareDialog = new DialogBox();
-		shareDialog.setText("Share");
-		shareDialog.setGlassEnabled(true);
-		shareDialog.setAnimationEnabled(true);
-		
-		share_vPanel = new VerticalPanel();
-		share_vPanel.setSpacing(10);
-		
-		shareDialog.add(share_vPanel);
-		
-		shareEmailArea = new TextArea();
-		shareEmailArea.setWidth("200px");
-		shareEmailArea.setHeight("20px");
-				
-		shareEmailArea.addFocusHandler(new FocusHandler() {					// Removes sample text ("E-mail address") after the first click
-			@Override
-			public void onFocus(FocusEvent event) {
-				if (shareEmailArea.getText().equals(DEFAULT_SHARE_EMAIL_ADDRESS_TEXT)) shareEmailArea.setText("");
-			}
-		});
-		shareEmailArea.addBlurHandler(new BlurHandler() {					// ... and put's it back when user didn't enter anything
-			@Override
-			public void onBlur(BlurEvent event) {
-				if (shareEmailArea.getText().equals("")) shareEmailArea.setText(DEFAULT_SHARE_EMAIL_ADDRESS_TEXT);				
-			}
-		});
-						
-		share_hPanel = new HorizontalPanel();
-		share_hPanel.setSpacing(10);
-		shareSendButton = new Button("Send");
-		shareSendButton.setWidth("100px");
-		
-		shareCancelButton = new Button("Cancel");
-		shareCancelButton.setWidth("100px");
-		shareCancelButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				shareDialog.hide();
-			}
-		});
-				
-		share_hPanel.add(shareSendButton);
-		share_hPanel.add(shareCancelButton);
-				
-		share_vPanel.add(shareEmailArea);
-		share_vPanel.add(share_hPanel);
-		share_vPanel.setCellHorizontalAlignment(shareEmailArea, HasHorizontalAlignment.ALIGN_CENTER);
-		share_vPanel.setCellHorizontalAlignment(share_hPanel, HasHorizontalAlignment.ALIGN_CENTER);
-		
-		shareButton = new Button("Share");
-		shareButton.setWidth("100px");
-		shareButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				shareDialog.center();
-				shareDialog.show();
-				shareEmailArea.setText(DEFAULT_SHARE_EMAIL_ADDRESS_TEXT);
-			}
-		});
-		
-		//add to main Panel
-		mainSidebarPanel.add(shareButton);
-		
-		//--End Share Button
-		
+
 		//add Panel to main
 		main.add(mainSidebarPanel);
 
+	}
+	
+	public static void sendEmail() {
+		AsyncCallback<Void> emailSent = new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Could not send email");
+				Home.setDefaultCursor();								
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				Window.alert("Email sent");
+				Home.setDefaultCursor();				
+			}
+
+		};
+		StringBuilder bodyText = new StringBuilder();
+		bodyText.append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /></head><body>");
+		bodyText.append(new SafeHtmlBuilder().appendEscapedLines(commentBodyArea.getText()).toSafeHtml().asString());
+		bodyText.append("<h2>").append(TabellaricViewWidget.pollList.getItemText(TabellaricViewWidget.pollList.getSelectedIndex()));
+		bodyText.append("</h2><table>");
+		bodyText.append(TabellaricViewWidget.dataTable.getElement().getInnerHTML());
+		bodyText.append("</table><table>");
+		bodyText.append(TabellaricViewWidget.demographicDataTable.getElement().getInnerHTML());
+		bodyText.append("</table><br>______________________________________<br>");
+		bodyText.append("Email created by Visupoll (visupoll.appspot.com)");
+		bodyText.append("</body></html>");
+		
+		System.out.println(bodyText.toString());
+		
+		TabellaricViewWidget.pollDataService.sendEmail(
+							commentEmailArea.getText(),
+							bodyText.toString(),
+							GeographicViewWidget.canvas.toDataUrl(),
+							emailSent);
+		
 	}
 
 }

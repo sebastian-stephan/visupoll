@@ -11,5 +11,7 @@ public interface PollDataServiceAsync {
 
 	void getListOfPolls(AsyncCallback<ArrayList<Poll>> callback);
 
+	void sendEmail(String email, String text, String picture,
+			AsyncCallback<Void> callback);
 
 }

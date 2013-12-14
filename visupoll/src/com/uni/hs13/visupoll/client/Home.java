@@ -67,4 +67,13 @@ public class Home implements EntryPoint {
 	RootPanel.get().add(vMasterPanel);
 
 	}
+	
+	// JQuery eyecandy
+	public static native void setWaitCursor() /*-{
+		$wnd.jQuery("body").css("cursor", "wait");
+	}-*/;
+
+	public static native void setDefaultCursor() /*-{
+		$wnd.jQuery("body").css("cursor", "default");
+	}-*/;
 }

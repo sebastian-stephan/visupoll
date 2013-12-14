@@ -28,45 +28,6 @@ h1 {
 	border: 1px solid gray;
 }
 
-svg {
-	stroke-linejoin: round;
-	stroke:#000;
-	stroke-width: 0.1px;
-	fill: #111;
-}
-
-#kantone path {
-	visibility: visible;
-	stroke: #000;
-}
-
-#kantone .selectedCanton {
-	fill: none;
-	stroke-width: 0.3px;
-}
-
-#kantone .notSelectedCanton {
-	fill: black;
-	opacity: 0.2;
-}
-
-#bezirke path {
-	visibility: visible;
-	stroke: #555;
-}
-
-#townships path {
-	visibility: hidden;
-}
-
-#lakes path {
-	fill: lightblue;
-	stroke: #555;
-}
-
-#schweiz path {
-	stroke-width: 0.3px;
-}
 
 #tooltip {
 	position: absolute;

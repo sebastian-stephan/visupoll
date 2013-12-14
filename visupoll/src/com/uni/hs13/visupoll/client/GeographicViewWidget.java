@@ -7,6 +7,7 @@ import org.vectomatic.dom.svg.OMSVGPathElement;
 import org.vectomatic.dom.svg.OMSVGSVGElement;
 import org.vectomatic.dom.svg.utils.OMSVGParser;
 
+import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,9 +24,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.uni.hs13.visupoll.datastructures.CantonData;
 import com.uni.hs13.visupoll.datastructures.DistrictData;
+//canvas
 
 public class GeographicViewWidget extends Composite {
 	interface GeographicViewWidgetUiBinder extends
@@ -38,8 +41,11 @@ public class GeographicViewWidget extends Composite {
 	@UiField
 	static HTMLPanel main;								// Main HTML panel
 	
+	static SimplePanel svgWrapper;						// Div around SVG needed by canvg library.
+	static Canvas canvas;								// Canvas for picture export
 	static OMSVGSVGElement mapSVG;						// The SVG element of the complete map
 	static OMSVGPathElement zoomedCanton = null;		// References path of the current zoomed in canton
+	static OMSVGAnimationElement anim;
 	static Button zoomOutButton = new Button("Zoom Out"); // Button to zoom back out
 	static Label toolTip = new Label("tooltip");
 	
@@ -66,6 +72,17 @@ public class GeographicViewWidget extends Composite {
 		toolTip.getElement().setAttribute("id", "tooltip");
 		toolTip.setVisible(false);
 		main.add(toolTip);
+		
+		svgWrapper = new SimplePanel();
+		svgWrapper.getElement().setId("svgWrapper");
+		main.add(svgWrapper);
+		
+		canvas = Canvas.createIfSupported();
+		canvas.getElement().setAttribute("width", "800");
+		canvas.getElement().setAttribute("height", "509");
+		canvas.getElement().setAttribute("style", "visibility: hidden; position: absolute");
+		canvas.getElement().setId("canvas");
+		main.add(canvas);
 	}
 	
 	private static void loadMap() {
@@ -78,7 +95,7 @@ public class GeographicViewWidget extends Composite {
 
 				private void onSuccess(Request request, Response response) {
 					mapSVG = OMSVGParser.parse(response.getText());
-					main.getElement().appendChild(mapSVG.getElement());
+					svgWrapper.getElement().appendChild(mapSVG.getElement());
 					mapSVG.setId("mapSVG");
 					initCantonClickHandlers();
 				}
@@ -121,12 +138,12 @@ public class GeographicViewWidget extends Composite {
 				OMElement e = mapSVG.getElementById(Integer.toString(district.districtID));
 				e.setAttribute("fill", getVoteColor(district.getYesPercent()/100));
 			} else {
-				//System.out.println("Couldn't find " + Integer.toString(district.districtID) + " "  + district.districtName);
+				System.out.println("Couldn't find " + Integer.toString(district.districtID) + " "  + district.districtName);
 			}
 		}
 		// Zoom
 		//mapSVG.setViewBox(zoomedCanton.getBBox());
-		OMSVGAnimationElement anim;
+		
 		anim = (OMSVGAnimationElement)mapSVG.getElementById("zoom");
 		String sOldViewbox = "";
 		if(fromViewbox == null)
@@ -230,6 +247,17 @@ public class GeographicViewWidget extends Composite {
   			}
 		);
 		
+	}-*/;
+	
+	public static native void svgToCanvas()/*-{
+		var finishedRendering = function() {
+			@com.uni.hs13.visupoll.client.SidebarWidget::sendEmail()();
+		};
+		
+		$wnd.canvg(null, null, { 
+				renderCallback: finishedRendering,
+				ignoreAnimation: false
+			});
 	}-*/;
 
 }

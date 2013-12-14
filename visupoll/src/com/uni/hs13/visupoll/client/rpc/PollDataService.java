@@ -10,4 +10,5 @@ import com.uni.hs13.visupoll.datastructures.Poll;
 public interface PollDataService extends RemoteService{
 	public Poll getPoll(int _id);
 	ArrayList<Poll> getListOfPolls();
+	void sendEmail(String email, String text, String picture);
 }

@@ -28,26 +28,26 @@ import com.uni.hs13.visupoll.client.GeographicViewWidget;
 
 public class TabellaricViewWidget extends Composite {
 	
-	PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT
+	static PollDataServiceAsync pollDataService = (PollDataServiceAsync) GWT
 			.create(PollDataService.class);
 	
 	private static final String DEAD_DROPBOX_ITEM = "NA";
 	
 	
-	FlexTable dataTable;
-	FlexTable demographicDataTable;
+	static FlexTable dataTable;
+	static FlexTable demographicDataTable;
 	
-	ListBox cantonList;
-	OptGroupListBox pollList;
-	ListBox districtList;
+	static ListBox cantonList;
+	static OptGroupListBox pollList;
+	static ListBox districtList;
 	
-	HorizontalPanel navigation;
-	VerticalPanel fullTable;
+	static HorizontalPanel navigation;
+	static VerticalPanel fullTable;
 	
-	Label demoDataMissing; //used for clarification if demographic data is missing.
+	static Label demoDataMissing; //used for clarification if demographic data is missing.
 	
 	@UiField
-	HTMLPanel main;	
+	static HTMLPanel main;	
 	
 	//Loads uiBinder
 	private static TabellaricViewWidgetUiBinder uiBinder = GWT
@@ -108,7 +108,7 @@ public class TabellaricViewWidget extends Composite {
 
 		// Load list of polls
 		pollDataService.getListOfPolls(pollListLoaded);
-		setWaitCursor();
+		Home.setWaitCursor();
 
 		main.add(fullTable);
 		
@@ -125,7 +125,7 @@ public class TabellaricViewWidget extends Composite {
 
 		@Override
 		public void onSuccess(ArrayList<Poll> polls) {
-			setDefaultCursor();
+			Home.setDefaultCursor();
 			// Fill Poll Dropdown list
 			int curYear=0;
 			for (int i = 0; i < polls.size(); i++) {
@@ -148,7 +148,7 @@ public class TabellaricViewWidget extends Composite {
 		public void onChange(ChangeEvent event) {
 			
 			if (pollList.getSelectedIndex() != 0) {
-				setWaitCursor();
+				Home.setWaitCursor();
 				pollDataService.getPoll(getSelectedPollID(), pollLoaded);
 			}
 		}
@@ -249,7 +249,7 @@ public class TabellaricViewWidget extends Composite {
 			// Color districts and townships
 			GeographicViewWidget.colorEverything();
 			
-			setDefaultCursor();
+			Home.setDefaultCursor();
 			
 		}
 	};
@@ -260,7 +260,7 @@ public class TabellaricViewWidget extends Composite {
 			if (cantonList.getValue(cantonList.getSelectedIndex()).equals(DEAD_DROPBOX_ITEM))
 				return;
 			
-			setWaitCursor();
+			Home.setWaitCursor();
 			
 			// Remove everything in datatable and add heading row
 			dataTable.removeAllRows();
@@ -284,7 +284,7 @@ public class TabellaricViewWidget extends Composite {
 			districtList.setEnabled(true);
 			districtList.addChangeHandler(districtSelected);
 			
-			setDefaultCursor();
+			Home.setDefaultCursor();
 		}
 	};
 	
@@ -294,7 +294,7 @@ public class TabellaricViewWidget extends Composite {
 			if (districtList.getValue(districtList.getSelectedIndex()).equals(DEAD_DROPBOX_ITEM))
 				return;
 			
-			setWaitCursor();
+			Home.setWaitCursor();
 			
 			// Remove everything in datatable and add heading row
 			dataTable.removeAllRows();
@@ -309,7 +309,7 @@ public class TabellaricViewWidget extends Composite {
 				dataTable.setText(row, 0, township.townshipName);
 				dataTable.setText(row, 1, Math.round(township.getYesPercent() * 10.0)/ 10.0 + "%");
 			}
-			setDefaultCursor();
+			Home.setDefaultCursor();
 			
 		}
 	};
@@ -326,13 +326,6 @@ public class TabellaricViewWidget extends Composite {
 	}
 
 	
-	// JQuery eyecandy
-	public static native void setWaitCursor() /*-{
-		$wnd.jQuery("body").css("cursor", "wait");
-	}-*/;
 
-	public static native void setDefaultCursor() /*-{
-		$wnd.jQuery("body").css("cursor", "default");
-	}-*/;
 
 }
