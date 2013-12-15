@@ -250,7 +250,11 @@ public class GeographicViewWidget extends Composite {
 		var scale1 = @com.uni.hs13.visupoll.client.GeographicViewWidget::colorScale1;
 		var scale2 = @com.uni.hs13.visupoll.client.GeographicViewWidget::colorScale2;
 		var scale3 = @com.uni.hs13.visupoll.client.GeographicViewWidget::colorScale3;
-		scale = $wnd.chroma.scale(['#'+scale1, '#'+scale2, '#'+scale3]).mode('lab');
+		
+		if (scale2 != "")
+			scale = $wnd.chroma.scale(['#'+scale1, '#'+scale2, '#'+scale3]).mode('lab');
+		else
+			scale = $wnd.chroma.scale(['#'+scale1, '#'+scale3]).mode('lab');
 		return scale(v).hex();
 	}-*/;
 	

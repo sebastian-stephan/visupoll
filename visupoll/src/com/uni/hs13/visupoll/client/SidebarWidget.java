@@ -341,9 +341,6 @@ public class SidebarWidget extends Composite {
 				onShow:function() {
 					$wnd.jQuery('#colorBox2').colpickSetColor(this.value);
 				}
-			})
-			.keyup(function(){
-				$wnd.jQuery('#colorBox2').colpickSetColor(this.value);
 			});
 			
 			$wnd.jQuery('#colorBox3').colpick({
@@ -355,9 +352,6 @@ public class SidebarWidget extends Composite {
 				onShow:function() {
 					$wnd.jQuery('#colorBox3').colpickSetColor(this.value);
 				}
-			})
-			.keyup(function(){
-				$wnd.jQuery('#colorBox3').colpickSetColor(this.value);
 			});
 		
 		
