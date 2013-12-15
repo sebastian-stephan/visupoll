@@ -291,8 +291,9 @@ public class GeographicViewWidget extends Composite {
 	public static String getCantonTooltip(String cantonID) {
 		String text;
 		CantonData c = Home.curPoll.getCanton(Integer.parseInt(cantonID));
-		text = 	c.getCantonNameLong() + "\n" +
-				Math.round(c.getYesPercent() * 10.0)/ 10.0 + "%";
+		text = 	c.getCantonNameLong() + ",\n" +
+				"Result: " + Math.round(c.getYesPercent() * 10.0)/ 10.0 + "%" + "\n" + 
+				"Turnout: " + Math.round(c.getTurnout() * 10.0)/ 10.0 + "%";
 		return text;
 	}
 	
@@ -300,8 +301,9 @@ public class GeographicViewWidget extends Composite {
 		String text;
 		DistrictData d = Home.curPoll.getCanton(Integer.parseInt(cantonID))
 				.getDistrict(Integer.parseInt(districtID));
-		text = 	d.getDistrictName() + "\n" +
-				Math.round(d.getYesPercent() * 10.0)/ 10.0 + "%";
+		text = 	d.getDistrictName() + ",\n" +
+				"Result: " + Math.round(d.getYesPercent() * 10.0)/ 10.0 + "%" + "\n" + 
+				"Turnout: " + Math.round(d.getTurnout() * 10.0)/ 10.0 + "%";
 		return text;
 	}
 	
@@ -311,8 +313,9 @@ public class GeographicViewWidget extends Composite {
 		TownshipData t = Home.curPoll.getCanton(Integer.parseInt(cantonID))
 				.getDistrict(Integer.parseInt(districtID))
 				.getTownship(Integer.parseInt(townshipID));
-		text = 	t.getTownshipName() + "\n" +
-				Math.round(t.getYesPercent() * 10.0)/ 10.0 + "%";
+		text = 	t.getTownshipName() + ",\n" +
+				"Result: " + Math.round(t.getYesPercent() * 10.0)/ 10.0 + "%" + "\n" + 
+				"Turnout: " + Math.round(t.getTurnout() * 10.0)/ 10.0 + "%";
 		return text;
 	}
 	
