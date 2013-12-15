@@ -104,10 +104,9 @@ public class SidebarWidget extends Composite {
 		helpTextArea.setHeight("170px");
 		helpTextArea.setText("Select the year and election type which you would like to visualize."
 				+ "\nSelecting canton and/or district will show "
-				+ "information only in the selected region.\n\nBy clicking 'Comment' button you can send "
-				+ "comment on the current visualization to the e-mail address specified."
-				+ "\n\nBy clicking 'Share' button you can send the current visualization to "
-				+ "the e-mail address specified.");
+				+ "information only in the selected region.\n\nBy clicking 'Share' button you can send "
+				+ "the current current visualization to the e-mail address specified."
+				+ "\n\nYou can change the color scheme for the map view when you click on 'Options'");
 				
 		helpCloseButton = new Button("Ok");
 		helpCloseButton.setWidth("100px");
