@@ -345,7 +345,7 @@ public class GeographicViewWidget extends Composite {
 	
 	public static native void changeCSSRule(int styleSheet, int rule, String attribute, String value)/*-{
 		// IE uses rules instead of cssRules
-		styleSheet++ //Uncomment for deployed version
+		//styleSheet++ //Uncomment for deployed version
 		var rules = $wnd.document.styleSheets[styleSheet].rules || $wnd.document.styleSheets[styleSheet].cssRules;
 		rules[rule].style[attribute] = value;
 	}-*/;
