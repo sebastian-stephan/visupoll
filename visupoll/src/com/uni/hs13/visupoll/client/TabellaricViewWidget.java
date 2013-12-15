@@ -140,12 +140,6 @@ public class TabellaricViewWidget extends Composite {
 
 			}
 			pollList.addChangeHandler(pollSelected);
-			pollList.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					Window.alert("now");
-				}
-			});
 		}
 
 	};
