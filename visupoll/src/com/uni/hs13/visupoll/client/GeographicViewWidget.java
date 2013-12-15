@@ -49,10 +49,16 @@ public class GeographicViewWidget extends Composite {
 	static OMSVGSVGElement mapSVG;						// The SVG element of the complete map
 	static OMSVGPathElement zoomedCanton = null;		// References path of the current zoomed in canton
 	static OMSVGAnimationElement anim;
-	static Button zoomOutButton = new Button("Zoom Out"); // Button to zoom back out
-	static ToggleButton townToggleButton = new ToggleButton("Show townships"); // Button to show townships
+	static Button zoomOutButton 
+			= new Button("Zoom Out"); 					// Button to zoom back out
+	static ToggleButton townToggleButton 
+			= new ToggleButton("Show townships"); 		// Button to show townships
+	static Label toolTip = new Label("tooltip");		// Tooltip
 	
-	static Label toolTip = new Label("tooltip");
+	
+	static String 	colorScale1 = "ff0000",				// Standard values for color scale
+					colorScale2 = "ffffff",				// scale1: 0% -> red, scale2: 50% -> white
+					colorScale3 = "00ff00";				// scale3: 100% -> green
 	
 	// Constructor
 	public GeographicViewWidget() {
@@ -80,9 +86,9 @@ public class GeographicViewWidget extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (!townToggleButton.isDown())
-					changeCSSRule(3, 4, "visibility", "visible");					
+					changeCSSRule(4, 4, "visibility", "visible");					
 				else
-					changeCSSRule(3, 4, "visibility", "hidden");
+					changeCSSRule(4, 4, "visibility", "hidden");
 			}
 		});
 		main.add(townToggleButton);
@@ -220,7 +226,7 @@ public class GeographicViewWidget extends Composite {
 					if (district.townships.isEmpty()) {
 						townToggleButton.setDown(false);
 						townToggleButton.setVisible(false);
-						changeCSSRule(3, 4, "visibility", "visible"); // show districts
+						changeCSSRule(4, 4, "visibility", "visible"); // show districts
 					}
 					for(final TownshipData town : district.townships) {
 						// Check for townships
@@ -241,7 +247,10 @@ public class GeographicViewWidget extends Composite {
 	}
 	
 	public static native String getVoteColor(float v)/*-{
-		scale = $wnd.chroma.scale(['red', 'white', 'green']).mode('lab');
+		var scale1 = @com.uni.hs13.visupoll.client.GeographicViewWidget::colorScale1;
+		var scale2 = @com.uni.hs13.visupoll.client.GeographicViewWidget::colorScale2;
+		var scale3 = @com.uni.hs13.visupoll.client.GeographicViewWidget::colorScale3;
+		scale = $wnd.chroma.scale(['#'+scale1, '#'+scale2, '#'+scale3]).mode('lab');
 		return scale(v).hex();
 	}-*/;
 	
